@@ -1,7 +1,22 @@
-<article class="prose">
-    <h1 class="h1">Welcome to SvelteKit</h1>
-    <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-    <button class="btn btn-primary">Hello daisyUI</button>
-</article>
+<script>
+    import ProcessList from "../components/ProcessList.svelte";
+    import RamGrid from "../components/RAMGrid.svelte";
+    import SwapSpace from "../components/SwapSpaceGrid.svelte";
+</script>
 
-bruh
+<!-- section for simulation -->
+<div class = "flex row class gap-4">
+    <RamGrid />
+    <SwapSpace />
+</div>
+
+<ProcessList />
+
+<div class = "flex row class gap-4">
+    <div>
+        bruh
+    </div>
+    <div>
+        bruh
+    </div>
+</div>
