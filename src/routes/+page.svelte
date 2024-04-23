@@ -18,18 +18,18 @@
 <NavBar />
 
 <!-- section for simulation -->
-<div class="flex flex-row justify-center gap-10" >
-    <div class = "flex flex-col justify-start overflow-y-auto" style="height: 80vh;">
+<div class="flex flex-row justify-center" >
+    <div class = "flex flex-col justify-start overflow-y-auto gap-5" style="height: 80vh;">
         <ProcessList processes={processes}/>
         <LfuList processes={processes}/>
         <LruList processes={processes}/>
     </div>
 
-    <div class="flex flex-row justify-center overflow-auto">
+    <div class="flex flex-row justify-center overflow-auto m-3">
         <VirtualMemory />
-        <span class = "text-7xl">&#8596;</span>
+        <span class = "text-4xl">&#8596;</span>
         <RamGrid />
-        <span class = "text-7xl">&#8596;</span>
+        <span class = "text-4xl">&#8596;</span>
         <SwapSpace />
     </div>
 </div>

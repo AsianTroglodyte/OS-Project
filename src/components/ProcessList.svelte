@@ -1,4 +1,5 @@
 <script>
+    import { fade } from "svelte/transition";
     // the default value is very important it allows for implicit 
     // typing. code refuses "any" 
     export let processes = [{PID: 0, VPN: "00", PFN: "00"}];
@@ -48,7 +49,7 @@
 
 
 
-<div class="flex flex-col align-items gap-5 m-3">
+<div class="flex flex-col align-items gap-5">
     <!-- Process Label -->
     <div class="flex flex-row gap-5 justify-center">
         <h1 class="text-center">Processes List</h1>
@@ -61,31 +62,41 @@
     <!-- Process list in the form of a table -->
     <div class="overflow-y-auto max-h-80 h-80 w-60
     border-separate border-2 border-slate-500 rounded-lg">
-        <table class="table table-auto 
+        <table class="table-xs table-auto w-full
         table-pin-rows table-pin-cols bg-base-200 ">
 
             <!-- head -->
             <thead>
-                <tr class="w-24">
+                <tr>
                     <!-- rounded to make sure edges of table are not cut -->
-                    <th class="bg-base-200  rounded-2xl">PID</th>
-                    <th class="bg-base-200"> VPN</th>
-                    <th class="bg-base-200  rounded-2xl">PFN</th>
+                    <th class="bg-base-200  rounded-2xl text-xs">PID</th>
+                    <th class="bg-base-200 text-xs"> VPN</th>
+                    <th class="bg-base-200  rounded-2xl text-xs">PFN</th>
+                    <th> </th>
                 </tr>
             </thead>
 
             <!-- Body -->
             <tbody >
                 {#each processes as process}
-                    <tr>
+                    <tr transition:fade>
                         <!-- rounded to make sure edges of table are not cut -->
                         <th class="bg-base-200 rounded-2xl">{process.PID}</th>
-                        <td>{process.VPN}</td>
-                        <td class="flex flex-row border-collapse  border-slate-500 rounded-2xl" style="justify-content: space-between;">
-                            <p class="content-center">{process.PFN}</p> 
+                        <td class="text-center">{process.VPN}</td>
+                        <td class="border-collapse border-slate-500 rounded-2xl" >
+                            <p class="content-center">{process.PFN} </p> 
+                            <!-- <button class="btn btn-square btn-outline btn-sm"
+                                on:click={() => removeProcess(process.PID)}>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button> -->
+                        </td>
+                        <td class="flex flex-row border-collapse border-slate-500 rounded-2xl gap-1">
                             <button class="btn btn-square btn-outline btn-sm"
                                 on:click={() => removeProcess(process.PID)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                            <button class="btn btn-square btn-outline btn-sm">
+                                Run
                             </button>
                         </td>
                     </tr>
