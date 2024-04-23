@@ -4,52 +4,95 @@
     export let processes = [{PID: 0, VPN: "00", PFN: "00"}];
     
     let addProcess = () => {
-        processes = [...processes, {PID: processes.length + 1, VPN: "bruh", PFN:"bruh"}];
+        console.log("bruh");
+        let newPID = 1;
+        // weird function but it is what it is
+        for (let i = 1; processes.length >= i; i++) {
+            console.log("looping");
+            // if no matching PID was found throughout process list
+            if (processes.find((process) => process.PID === i) !== undefined) {
+                console.log(processes.find((process) => process.PID === i));
+                if (processes.length === i) {
+                    newPID = i + 1;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+            else if (processes.find((process) => process.PID === i) === undefined) {
+                newPID = i;
+                break;
+            }
+        }
+    
+        processes = [...processes, {PID: newPID, VPN: "bruh", PFN:"bruh"}];
         console.log(processes);
     }
+
+    /*bad type safety. couldn't figure how to get around it!*/
+    let removeProcess = (processID) => {
+        // there's probably a better way to do this... too bad!
+        // consider replacing with .find()
+        for (let i = 0; processes.length > i; i++) {
+            if (processes[i].PID === processID) {
+                processes.splice(i, 1);
+                processes = processes;
+                console.log(processes);
+                break;
+            }
+        }
+    }
+    // for table border: border-separate border border-slate-500 
 </script>
 
 
-<div class="flex flex-col ">
+
+<div class="flex flex-col align-items gap-5 m-3">
     <!-- Process Label -->
-    <div class="flex flex-row gap-5 m-3">
-        <h1 class="text-center content-center text-2xl">Processes List</h1>
-        <button 
-            class="btn btn-secondary p-4 btn-xs content-center"
-            on:click={addProcess}>
-            +
+    <div class="flex flex-row gap-5 justify-center">
+        <h1 class="text-center">Processes List</h1>
+        <button class="btn btn-xs btn-primary  bg-gradient-to-r from-sky-400 to-indigo-400" on:click={addProcess}>
+            add
         </button>
     </div>
 
+
     <!-- Process list in the form of a table -->
-    <table class="table table-auto 
-        border-separate border border-slate-500 
-        table-pin-rows table-pin-cols 
-        bg-base-200">
-        <!-- head -->
-        <thead>
-            <tr class="w-24">
-                <!-- rounded to make sure edges of table are not cut -->
-                <th class="bg-base-200  rounded-2xl">PID</th>
-                <th class="bg-base-200"> VPN</th>
-                <th class="bg-base-200  rounded-2xl">PFN</th>
-            </tr>
-        </thead>
-        <!-- Body -->
-        <tbody>
-            {#each processes as process}
-                <tr>
+    <div class="overflow-y-auto max-h-80 h-80 w-60
+    border-separate border-2 border-slate-500 rounded-lg">
+        <table class="table table-auto 
+        table-pin-rows table-pin-cols bg-base-200 ">
+
+            <!-- head -->
+            <thead>
+                <tr class="w-24">
                     <!-- rounded to make sure edges of table are not cut -->
-                    <th class="bg-base-200 rounded-2xl">{process.PID}</th>
-                    <td>{process.VPN}</td>
-                    <td class="flex flex-row border-collapse  border-slate-500 rounded-2xl" style="justify-content: space-between;">
-                        <p class="content-center">{process.PFN}</p> 
-                        <button class="btn btn-square btn-outline btn-sm ">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    </td>
+                    <th class="bg-base-200  rounded-2xl">PID</th>
+                    <th class="bg-base-200"> VPN</th>
+                    <th class="bg-base-200  rounded-2xl">PFN</th>
                 </tr>
-            {/each}
-        </tbody>
-    </table>
+            </thead>
+
+            <!-- Body -->
+            <tbody >
+                {#each processes as process}
+                    <tr>
+                        <!-- rounded to make sure edges of table are not cut -->
+                        <th class="bg-base-200 rounded-2xl">{process.PID}</th>
+                        <td>{process.VPN}</td>
+                        <td class="flex flex-row border-collapse  border-slate-500 rounded-2xl" style="justify-content: space-between;">
+                            <p class="content-center">{process.PFN}</p> 
+                            <button class="btn btn-square btn-outline btn-sm"
+                                on:click={() => removeProcess(process.PID)}>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </div>
 </div>
+
+

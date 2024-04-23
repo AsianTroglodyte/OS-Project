@@ -4,6 +4,8 @@
     import SwapSpace from "../components/SwapSpaceGrid.svelte";
     import LfuList from "../components/LFUList.svelte";
     import LruList from "../components/LRUList.svelte";
+    import VirtualMemory from "../components/VirtualMemory.svelte";
+    import NavBar from "../components/NavBar.svelte";
 
     let processes = [
         {PID: 1, VPN: "01", PFN: "01"},
@@ -13,18 +15,21 @@
     ]
 </script>
 
+<NavBar />
+
 <!-- section for simulation -->
-<div class = "flex flex-col justify-center gap-10">
-    <div class = "flex flex-row gap-4 items-center justify-center">
+<div class="flex flex-row justify-center gap-10" >
+    <div class = "flex flex-col justify-start overflow-y-auto" style="height: 80vh;">
         <ProcessList processes={processes}/>
+        <LfuList processes={processes}/>
+        <LruList processes={processes}/>
+    </div>
+
+    <div class="flex flex-row justify-center overflow-auto">
+        <VirtualMemory />
+        <span class = "text-7xl">&#8596;</span>
         <RamGrid />
         <span class = "text-7xl">&#8596;</span>
         <SwapSpace />
-    </div>
-
-
-    <div class = "flex flex-row	 gap-4 items-center justify-center">
-        <LfuList processes={processes}/>
-        <LruList processes={processes}/>
     </div>
 </div>
