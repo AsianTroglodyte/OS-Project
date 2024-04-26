@@ -25,6 +25,7 @@
 	"type": "module",
 	"dependencies": {
 		"node": "^18.20.2",
+		"svelte-dnd-action": "^0.9.43",
 		"typescript": "^5.4.5"
 	}
 }

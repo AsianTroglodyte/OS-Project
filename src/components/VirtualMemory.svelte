@@ -4,11 +4,11 @@
 
 <div class="flex flex-col gap-5 ">
     <div class="text-center">
-        Virtual Memory Pages
+        Virtual Address Space
     </div>
     
     <div class="overflow-y-auto" style="height:74vh" >
-        <div class="grid grid-rows-9 grid-cols-2 grid-flow-col box-border
+        <div class="flex w-64 flex-wrap justify-center box-border
         bg-gradient-to-r bg-gradient-to-r 
         from-sky-500 to-indigo-600 
         gap-2 p-2 overflow-y-auto 

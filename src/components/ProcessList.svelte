@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { fade } from "svelte/transition";
     // the default value is very important it allows for implicit 
     // typing. code refuses "any" 
@@ -31,8 +31,8 @@
         console.log(processes);
     }
 
-    /*bad type safety. couldn't figure how to get around it!*/
-    let removeProcess = (processID) => {
+    /*bad type safety. couldn't figure out this bit without this weird thing tbh*/
+    let removeProcess = (processID : number) => {
         // there's probably a better way to do this... too bad!
         // consider replacing with .find()
         for (let i = 0; processes.length > i; i++) {
@@ -52,12 +52,11 @@
 <div class="flex flex-col align-items gap-5">
     <!-- Process Label -->
     <div class="flex flex-row gap-5 justify-center">
-        <h1 class="text-center">Processes List</h1>
+        <h1 class="text-center">Process Table</h1>
         <button class="btn btn-xs btn-primary  bg-gradient-to-r from-sky-400 to-indigo-400" on:click={addProcess}>
             add
         </button>
     </div>
-
 
     <!-- Process list in the form of a table -->
     <div class="overflow-y-auto max-h-80 h-80 w-60
@@ -84,11 +83,7 @@
                         <th class="bg-base-200 rounded-2xl">{process.PID}</th>
                         <td class="text-center">{process.VPN}</td>
                         <td class="border-collapse border-slate-500 rounded-2xl" >
-                            <p class="content-center">{process.PFN} </p> 
-                            <!-- <button class="btn btn-square btn-outline btn-sm"
-                                on:click={() => removeProcess(process.PID)}>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button> -->
+                            <p class="text-center">{process.PFN} </p> 
                         </td>
                         <td class="flex flex-row border-collapse border-slate-500 rounded-2xl gap-1">
                             <button class="btn btn-square btn-outline btn-sm"
