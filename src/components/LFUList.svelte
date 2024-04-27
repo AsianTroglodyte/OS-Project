@@ -1,7 +1,7 @@
 <script>
     // the default value is very important it allows for implicit 
     // typing. code refuses "any" 
-    export let processes = [{PID: 0, VPN: "00", PFN: "00"}];
+    export let processes = [{PID: 4, VPN: "04", PFN: 0, BlockID: "?", PresentBit: "0", ValidBit: "0"}];
 </script>
 
 <div class="flex flex-col gap-5 max-h-80 h-80">
