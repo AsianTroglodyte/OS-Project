@@ -19,6 +19,7 @@
                 <tr>
                     <th class="text-xs">PID</th>
                     <th class="text-xs">Process Type</th>
+                    <th class="text-xs">Frequency</th>
                 </tr>
             </thead>
             <tbody>
