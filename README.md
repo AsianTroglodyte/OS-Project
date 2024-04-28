@@ -1,18 +1,6 @@
-# create-svelte
-
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+# What?
+this is a website that provides an interative visualization for how swapping works, 
+where the user acts as the OS managing memory and choosing what processes to.
 
 ## Developing
 
