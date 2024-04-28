@@ -8,10 +8,6 @@
 
     const mem_count = Array(10);
 
-    const boardGrid = Array.from({ length: 2 }, (_, i) =>
-        Array.from({ length: 5}, (_, j) => ({ id: i * 15 + j }))
-    );
-
     const flipDurationMs = 300;
 
 ;
@@ -26,7 +22,7 @@
     <h1 class="text-center">
         Swap Space (Disk) 
     </h1>
-	<div class="flex flex-row justify-center gap-2 w-48  flex-wrap
+	<div class="flex flex-row justify-center gap-2 w-56  flex-wrap
     bg-gradient-to-r bg-gradient-to-r from-sky-500 to-indigo-600 gap-2 p-2 rounded">
 		{#each mem_count as mem_area, PFN}
 			<MemAddr PFN={PFN}/>

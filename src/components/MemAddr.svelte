@@ -1,5 +1,6 @@
 <script>
 	import { dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
+	import { flip } from 'svelte/animate';
 
 	// IMPORTANT SQUARES ARE MADE WITH THE SOLE PURPOSE OF PROVIDING
 	// EMPTY SPACES FOR PROCESSES
@@ -20,6 +21,8 @@
 		console.log(items);
 	}
 	
+	const flipDurationMs = 100;
+	
 	$: options = {
 		dropFromOthersDisabled: items.length,
 		items,
@@ -32,10 +35,12 @@
 
 <div class="bg-primary w-full h-12 text-white shadow-lg font-mono rounded"
     use:dndzone={options} on:consider={handleDnd} on:finalize={handleDnd}>
-	{#each items as tile(tile.id)}
-		<div class= "bg-primary w-full h-12 text-white shadow-lg font-mono rounded">
+	
+	{#each items as tile (tile.id)}
+		<div class= "bg-primary w-full h-12 text-white shadow-lg font-mono rounded"
+		animate:flip={{ duration: flipDurationMs }}>
 			PFN:{PFN}
-			{items[0].letter}
+			{items[0].PID}
 		</div>
 	{/each}
 </div>

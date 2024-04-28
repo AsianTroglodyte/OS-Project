@@ -26,7 +26,7 @@
         Physical Address Space (RAM)
     </h1>
 
-	<div class="flex flex-row justify-center gap-2 w-48 flex-wrap
+	<div class="flex flex-row justify-center gap-2 w-56 flex-wrap
     bg-gradient-to-r bg-gradient-to-r from-sky-500 to-indigo-600 gap-2 p-2 rounded">
 		{#each mem_count as mem_area, PFN}
 			<!-- <div class="flex flex-col gap-2"> -->
