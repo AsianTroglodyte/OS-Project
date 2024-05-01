@@ -1,23 +1,22 @@
-<script>
+<script lang="ts">
     import {dndzone} from 'svelte-dnd-action';
-    import MemAddr from './MemAddr.svelte';
-    import UnmappedProcesses from './UnmappedProcesses.svelte';
+    import MemAddrRow from './MemAddrRow.svelte';
 
-    export let phys_addr_space_contents = [{id: 0, name:"bruh"}];
+    export let changePBit;
+    export let changeVBit;
+    
+    let inSwapSpace = false;
+
+    // there is probably a more efficient way to do this. Anyways it allows for initializing empty rows.
+    const mem_count =  [{id: 0},{id:1},{id:2},{id:3},{id:4},{id:5},{id:6},{id:7},{id:8},{id:9}];
 
 
-    const mem_count = Array(10);
-    const boardGrid = Array.from({ length: 2 }, (_, i) =>
-        Array.from({ length: 5}, (_, j) => ({ id: i * 15 + j }))
-    );
+    /**
+     * @param {{ detail: { items: { id: number; letter: string; }[]; }; }} e
+     */
+    // the following really neads https://svelte.dev/repl/3d8be94b2bbd407c8a706d5054c8df6a?version=3.59.2
 
 
-    const flipDurationMs = 300;
-    $: options = {
-        phys_addr_space_contents,
-        flipDurationMs,
-        morphDisabled: true
-    };
     
 </script>
 
@@ -26,13 +25,21 @@
         Physical Address Space (RAM)
     </h1>
 
-	<div class="flex flex-row justify-center gap-2 w-56 flex-wrap
-    bg-gradient-to-r bg-gradient-to-r from-sky-500 to-indigo-600 gap-2 p-2 rounded">
-		{#each mem_count as mem_area, PFN}
-			<!-- <div class="flex flex-col gap-2"> -->
-			<MemAddr PFN={PFN} AreaType={"PFN"}/>
-		    <!-- </div> -->
-		{/each}
-	</div>
-
+    <table class="table-xs table-auto w-60
+    table-pin-rows table-pin-cols bg-base-200 
+    border-separate border-spacing-y-1 ">
+        <!-- head -->
+        <thead>
+            <tr>
+                <!-- rounded to make sure edges of table are not cut -->
+                <th class="bg-base-200  rounded-2xl text-xs">PFN</th>
+                <th class="bg-base-200  rounded-2xl text-xs">PID</th>
+                <th class="bg-base-200  rounded-2xl text-xs">VPN</th>
+            </tr>
+        </thead>
+        <!-- PFN acts as an index as well -->
+        {#each mem_count as mem_area, PFN (mem_area.id)}
+            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace}></MemAddrRow>
+        {/each}
+    </table>
 </div>

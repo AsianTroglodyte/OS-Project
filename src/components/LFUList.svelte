@@ -7,16 +7,16 @@
     export let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
 </script>
 
-<div class="flex flex-col gap-5 max-h-80 h-80">
+<div class="flex flex-col gap-5 max-h-80">
     <h1 class = "text-center"> Least Frequently Used</h1>
-    <div class="overflow-y-auto max-h-80 h-80
-        border-separate border-2 border-slate-500 rounded-lg">
+    <div class="overflow-y-auto max-h-80 h-48 bg-base-200 ">
         <table class="table-xs table-auto bg-base-200 w-full">
             <!-- head -->
             <thead>
                 <tr>
                     <th class="text-xs">PID</th>
-                    <th class="text-xs">Process Type</th>
+                    <th class="text-xs">VPN</th>
+                    <th class="text-xs">Frequency</th>
                 </tr>
             </thead>
             <tbody>

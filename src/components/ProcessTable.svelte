@@ -5,7 +5,6 @@
     export let processes = [
         {id: 0, processType: "P1"},
     ];
-    export let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}];
 
     export let addProcess = (ProcessType: string) => {};
     export let removeProcess = (id: number) => {};
@@ -19,21 +18,21 @@
     <!-- Process Label -->
     <h1 class="text-center">Process Table</h1>
     <div class="flex flex-row gap-5 justify-center">
-        <button class="btn btn-xs btn-primary  bg-gradient-to-r from-sky-400 to-indigo-400" on:click={() => addProcess("P1")}>
+        <button class="btn btn-xs btn-primary bg-primary" on:click={() => addProcess("P1")}>
             Add P1
         </button>
-        <button class="btn btn-xs btn-primary  bg-gradient-to-r from-sky-400 to-indigo-400" on:click={() => addProcess("P2")}>
+        <button class="btn btn-xs btn-primary  bg-primary" on:click={() => addProcess("P2")}>
             Add P2
         </button>
-        <button class="btn btn-xs btn-primary  bg-gradient-to-r from-sky-400 to-indigo-400" on:click={() => addProcess("P3")}>
+        <button class="btn btn-xs btn-primary bg-primary" on:click={() => addProcess("P3")}>
             Add P3
         </button>
     </div>
     
 
     <!-- Process list in the form of a table -->
-    <div class="overflow-y-auto max-h-80 h-80 w-60
-    border-separate border-2 border-slate-500 rounded-lg">
+    <!-- border-separate border-2 border-slate-500 rounded-lg -->
+    <div class="overflow-y-auto max-h-80 h-80 w-60 bg-base-200 ">
         <table class="table-xs table-auto w-full
         table-pin-rows table-pin-cols bg-base-200 ">
 

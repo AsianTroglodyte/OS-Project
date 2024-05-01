@@ -6,17 +6,15 @@
     import LruList from "../components/LRUList.svelte";
     import PageTable from "../components/PageTable.svelte";
     import NavBar from "../components/NavBar.svelte";
-    import App from "../components/UnmappedProcesses.svelte";
 
-    // the processes list contains the info about processes and info on the pages of processes
-        // IMPORTANT pageElemID. Elements must have unique ID's to work with DND functionality
-        // + makes other operations extremely easy. Unfortunately, id 
+    // defining different lists for each table simplay makes things a bit easier to implement 
+    // Perhaps makes using the tables a bit more difficult makes other operations extremely easy.
     let processes = [
         {id: 0, processType: "P1"},
     ]
+    let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}];
 
-    // a separate list for pages is important for DND functionality because it's list items that get transferred across lists 
-    let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
+
 
     let pageElemID  = 1;
 
@@ -35,7 +33,7 @@
                 }
             }
             else if (processes.find((process) => process.id === i) === undefined) {
-                newPID = i;
+                newPID = i; 
                 break;
             }
         }
@@ -61,8 +59,6 @@
         }
     
         processes = [...processes, {id: newPID, processType: ProcessType}];
-        console.log(processes);
-        console.log(pageElems);
     }
 
     let removeProcess = (processID : number) => {
@@ -76,31 +72,34 @@
                 break;
             }
         }
+        
+        // for () pageElems
+        // 
     }
 
-    let phys_addr_space_contents = 
-        [{id: 0, name:"bruh"},
-        {id:1, name:"bruh"},
-        {id:2, name:"bruh"},
-        {id:3, name:"bruh"},
-        {id:4, name:"bruh"},
-        {id:5, name:"bruh"},
-        {id:6, name:"bruh"},
-        {id:7, name:"bruh"},
-        {id:8, name:"bruh"},
-        {id:9, name:"bruh"}]
+    let changePBit = (PID : number, VPN : number, changeNum : number) => {
+        let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
+        pageElems[changingElemIndex].PresentBit = changeNum;
+    }
+    let changeVBit = (PID : number, VPN : number, changeNum : number) => {
+        let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
+        pageElems[changingElemIndex].ValidBit = changeNum;
+    }
+    // checks if there is a copy of a memory address
+    let copyChecker = (PID : number, VPN : number, changeNum : number) => {
+        let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
+        if (changingElemIndex) {
+            return true;
+        }
+    }
 
-    let swap_space_contents = 
-        [{id: 10, name:"bruh"},
-        {id:11, name:"bruh"},
-        {id:12, name:"bruh"},
-        {id:13, name:"bruh"},
-        {id:14, name:"bruh"},
-        {id:15, name:"bruh"},
-        {id:16, name:"bruh"},
-        {id:17, name:"bruh"},
-        {id:18, name:"bruh"},
-        {id:19, name:"bruh"}]
+    let printPageElems = () => {
+        console.log(pageElems);
+    }
+
+    let modifyPageElems = (func) => {
+        func(pageElems);
+    }
 
 </script>
 
@@ -109,24 +108,27 @@
 <!-- section for simulation -->
 
 <div class = "flex flex-col items-center align center overflow-y-auto gap-5 m-3"> 
-    <div class = "" style="width: 80vh;">
-        bruh
-    </div>
+    <!-- <div class = "" style="width: 80vh;">
+        <p>NOTE: Page Table valid bit indicates whether a page has been allocated any memory OR disk of any stroke-width.
+        In other words, a "true" valid bit indicates means that the page is in either memory or disk. </p>
 
+        <p>Present Bit, on the other hand is indicates whether the page is in EITHER memory OR disk. In other words, if 
+        the present bit is true (1) that means the page is in memory and false (0) if it is disk instead. </p>
+    </div> -->
 
     <div class="flex flex-row justify-center" >
         <div class = "flex flex-col justify-start overflow-y-auto gap-5 m-3" style="height: 80vh;">
-            <ProcessTable {processes} {pageElems} {addProcess} {removeProcess}/>
+            <ProcessTable {processes} {addProcess} {removeProcess}/>
             <LfuList {processes} {pageElems}/>
             <LruList {processes} {pageElems}/>
         </div>
 
         <div class="flex flex-row overflow-auto m-3">
-            <PageTable {processes} {pageElems} />
+            <PageTable {pageElems} {printPageElems}/>
             <span class = "text-4xl">&#8596;</span>
-            <PAS  phys_addr_space_contents={phys_addr_space_contents}/>
+            <PAS  {changePBit} {changeVBit}/>
             <span class = "text-4xl">&#8596;</span>
-            <SwapSpace swap_space_contents={swap_space_contents}/>
+            <SwapSpace {changePBit} {changeVBit}/>
         </div>
     </div>
 </div>

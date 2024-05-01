@@ -1,31 +1,34 @@
 <script lang="ts">
-    import {dndzone} from 'svelte-dnd-action';
-    import UnmappedProcesses from './UnmappedProcesses.svelte';
-    import MemAddr from './MemAddr.svelte';
+    import MemAddrRow from './MemAddrRow.svelte';
     
-    export let swap_space_contents = [{id: 0, name:"bruh"}];
-    
+    export let changePBit;
+    export let changeVBit;
 
-    const mem_count = Array(10);
-
+    const swap_count = [{id: 0},{id:1},{id:2},{id:3},{id:4},{id:5},{id:6},{id:7},{id:8},{id:9}];
     const flipDurationMs = 300;
+    const inSwapSpace = true;
 
-;
-    $: options = {
-        swap_space_contents,
-        flipDurationMs,
-        morphDisabled: true
-    };
 </script>
 
 <div class="flex flex-col gap-5">
     <h1 class="text-center">
         Swap Space (Disk) 
     </h1>
-	<div class="flex flex-row justify-center gap-2 w-56  flex-wrap
-    bg-gradient-to-r bg-gradient-to-r from-sky-500 to-indigo-600 gap-2 p-2 rounded">
-		{#each mem_count as mem_area, PFN}
-			<MemAddr PFN={PFN}/>
-		{/each}
-	</div>
+
+    <table class="table-xs table-auto w-60
+    table-pin-rows table-pin-cols bg-base-200 
+    border-separate border-spacing-y-1 ">
+        <!-- head -->
+        <thead>
+            <tr>
+                <!-- rounded to make sure edges of table are not cut -->
+                <th class="bg-base-200  rounded-2xl text-xs">Block #</th>
+                <th class="bg-base-200  rounded-2xl text-xs">PID</th>
+                <th class="bg-base-200  rounded-2xl text-xs">VPN</th>
+            </tr>
+        </thead>
+        {#each swap_count as swap_area, PFN (swap_area.id)}
+            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace}></MemAddrRow>
+        {/each}
+    </table>
 </div>
