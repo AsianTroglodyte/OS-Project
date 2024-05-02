@@ -1,6 +1,7 @@
 <script lang="ts">
     import MemAddrRow from './MemAddrRow.svelte';
     
+    export let processes;
     export let changePBit;
     export let changeVBit;
 
@@ -28,7 +29,7 @@
             </tr>
         </thead>
         {#each swap_count as swap_area, PFN (swap_area.id)}
-            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace}></MemAddrRow>
+            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace} {processes}></MemAddrRow>
         {/each}
     </table>
 </div>

@@ -72,3 +72,51 @@
 </div>
 
 
+<div class="flex flex-col gap-5 max-h-80">
+    <h1 class = "text-center"> Least Frequently Used Pages</h1>
+    <div class="overflow-y-auto max-h-80 h-48 bg-base-200 ">
+        <table class="table-xs table-auto bg-base-200 w-full">
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th class="text-xs">PID</th>
+                    <th class="text-xs">VPN</th>
+                    <th class="text-xs">Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each processes as process}
+                    <tr>
+                        <th class="bg-base-200  rounded-2xl text-center">{process.id}</th>
+                        <td class="bg-base-200  rounded-2xl text-center">{process.processType}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="flex flex-col gap-5 max-h-80">
+    <h1 class = "text-center"> Least Recently Used Pages</h1>
+    <div class="overflow-y-auto max-h-80 h-48 bg-base-200 ">
+        <table class="table-xs table-auto bg-base-200 w-full">
+            
+            <!-- head -->
+            <thead>
+                <tr>
+                    <th class="text-xs">PID</th>
+                    <th class="text-xs">VPN</th>
+                    <th class="text-xs">Recency</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each processes as process}
+                    <tr>
+                        <th class="bg-base-200  rounded-2xl text-center">{process.id}</th>
+                        <td class="bg-base-200  rounded-2xl text-center">{process.processType}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </div>
+</div>

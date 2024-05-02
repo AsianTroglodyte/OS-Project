@@ -1,9 +1,7 @@
 <script lang="ts">
-    import ProcessTable from "../components/ProcessTable.svelte";
+    import ProcessTableAndStats from "../components/ProcessTableAndStats.svelte";
     import PAS from "../components/PAS.svelte";
     import SwapSpace from "../components/SwapSpace.svelte";
-    import LfuList from "../components/LFUList.svelte";
-    import LruList from "../components/LRUList.svelte";
     import PageTable from "../components/PageTable.svelte";
     import NavBar from "../components/NavBar.svelte";
 
@@ -19,9 +17,9 @@
     let pageElemID  = 1;
 
     let addProcess = (ProcessType: string) => {
-        let newPID = 1;
+        let newPID = 0;
         //  following determines the PID of latest process. Bit weird, but it is what it is
-        for (let i = 1; processes.length >= i; i++) {
+        for (let i = 0; processes.length >= i; i++) {
             // if no matching PID was found throughout process list
             if (processes.find((process) => process.id === i) !== undefined) {
                 if (processes.length === i) {
@@ -57,7 +55,7 @@
                         {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
             pageElemID += 3; 
         }
-    
+        
         processes = [...processes, {id: newPID, processType: ProcessType}];
     }
 
@@ -93,8 +91,8 @@
         }
     }
 
-    let printPageElems = () => {
-        console.log(pageElems);
+    let printPageElems = ( otherMessage) => {
+        console.log(otherMessage, pageElems);
     }
 
     let modifyPageElems = (func) => {
@@ -118,17 +116,15 @@
 
     <div class="flex flex-row justify-center" >
         <div class = "flex flex-col justify-start overflow-y-auto gap-5 m-3" style="height: 80vh;">
-            <ProcessTable {processes} {addProcess} {removeProcess}/>
-            <LfuList {processes} {pageElems}/>
-            <LruList {processes} {pageElems}/>
+            <ProcessTableAndStats {processes} {addProcess} {removeProcess}/>
         </div>
 
         <div class="flex flex-row overflow-auto m-3">
-            <PageTable {pageElems} {printPageElems}/>
+            <PageTable {pageElems} {printPageElems} {processes}/>
             <span class = "text-4xl">&#8596;</span>
-            <PAS  {changePBit} {changeVBit}/>
+            <PAS  {changePBit} {changeVBit} {processes}/>
             <span class = "text-4xl">&#8596;</span>
-            <SwapSpace {changePBit} {changeVBit}/>
+            <SwapSpace {changePBit} {changeVBit} {processes}/>
         </div>
     </div>
 </div>

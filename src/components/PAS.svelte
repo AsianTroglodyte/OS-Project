@@ -2,6 +2,7 @@
     import {dndzone} from 'svelte-dnd-action';
     import MemAddrRow from './MemAddrRow.svelte';
 
+    export let processes;
     export let changePBit;
     export let changeVBit;
     
@@ -39,7 +40,7 @@
         </thead>
         <!-- PFN acts as an index as well -->
         {#each mem_count as mem_area, PFN (mem_area.id)}
-            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace}></MemAddrRow>
+            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace} {processes}></MemAddrRow>
         {/each}
     </table>
 </div>

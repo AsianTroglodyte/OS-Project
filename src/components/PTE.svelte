@@ -1,13 +1,12 @@
 <script>
 // @ts-nocheck
 
-	import { dndzone } from 'svelte-dnd-action';
-	import { flip } from 'svelte/animate';
+    import { dndzone } from 'svelte-dnd-action';
+    import { flip } from 'svelte/animate';
     import SwapSpace from './SwapSpace.svelte';
 
 
-	export let PFN;
-    export let processes;
+    export let PFN;
     export let changePBit;
     export let changeVBit;
     export let inSwapSpace;
@@ -15,13 +14,14 @@
     let items = [];
 
     function handleMessage(event) {
-		alert(event.detail.text);
-	}
+        alert(event.detail.text);
+    }
 
     // the following handle throws error because sometimes when ran items does not contain anything
     // therefore we check first.
-	function handleConsider(e) {
-		items = e.detail.items;
+    function handleConsider(e) {
+        items = e.detail.items;
+        // console.log(items);
     }
 
     function handleFinalize(e) {
@@ -38,7 +38,7 @@
             }
         }
     }
-	
+    
     // styling element when being dragged based on 
     function transformDraggedElement(draggedEl, data, index) {
         // recall: PresentBit = 1 means in swap space and PresentBit = 0 means in Physical Address Space
@@ -58,31 +58,20 @@
                                         <p>V-Bit: ${data.VPN}</p>
                                     </div>`;
         }
-	}
-
-
-    // delete the contents of items if the process cannot be found in the process table (in the process table's array at least)
-    // I know its terrible because it updates on every process table change. instead of every deletion.
-    // Also the bang at the beginning of the conditional is very wonky, but I'm strapped for time rn.
-    function handleProcessDeletion(processes) {
-        if (!(items.length === 1 && processes.find((process) =>  process.id === items[0].PID) !== undefined)) {
-            items = [];
-        }
     }
-    $: handleProcessDeletion(processes);
 
-	const flipDurationMs = 100;
-	
+    const flipDurationMs = 100;
+    
     // options / how the dnd zone works must change depending on information
     // thus a reactive declaration
-	$: options = {
-		dropFromOthersDisabled: items.length,
-		items: items,
-		dropTargetStyle: {},
+    $: options = {
+        dropFromOthersDisabled: items.length,
+        items: items,
+        dropTargetStyle: {},
         transformDraggedElement,
-		flipDurationMs: 0,
+        flipDurationMs: 0,
         dragDisabled: items.length === 1?  false: true,
-	};
+    };
 </script>
 
 <!-- the situation here is strange indeed. since <tbody> is effectively replacing the rows
@@ -93,7 +82,7 @@ row-->
 <tbody class="bg-primary w-full h-10 text-white font-mono rounded "
     use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
 
-	{#if items.length === 1}
+    {#if items.length !== 0}
         {#each items as item (item.id)}
             <tr class= "bg-primary w-full h-10 text-white font-mono rounded "
             animate:flip={{ duration: flipDurationMs }}>

@@ -4,6 +4,7 @@
     import { fade } from 'svelte/transition';
 	
 	export let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}];
+    export let processes;
     export let printPageElems;
 
 	/**
@@ -14,7 +15,6 @@
     // I don't really know how this works https://svelte.dev/repl/924b4cc920524065a637fa910fe10193?version=3.59.2
     let shouldIgnoreDndEvents = false;
     function handleDndConsider(e) {
-
         const {trigger, id} = e.detail.info;
         if (trigger === TRIGGERS.DRAG_STARTED ) {
             const idx = pageElems.findIndex(pageElem => pageElem.id === id);
@@ -34,21 +34,24 @@
         else {
             pageElems = [...pageElems];
         }
-
-
     }
 
+
+    let allocated = false;
     function handleDndFinalize(e) {
         // note that every combination of ID and PID is unique 
         if (!shouldIgnoreDndEvents) {
             // e.detail.items.PresentBit === 0;
             pageElems = e.detail.items;
+            allocated = true;
         }
         else {
             pageElems = [...pageElems];
             shouldIgnoreDndEvents = false;
-            console.log("finalized");
-            printPageElems();
+        }
+        // disabling drags and drops after a successful drop into another place
+        if (e.detail.info.trigger === "droppedIntoAnother") {
+            allocated = true;
         }
     }
     
@@ -70,10 +73,12 @@
 	}
 
 	const flipDurationMs = 100;
-	
+
     $: options = {
         items: pageElems,
         flipDurationMs,
+        dropFromOthersDisabled: allocated,
+        dragDisabled: allocated,
         transformDraggedElement,
         morphDisabled: true,
     };
