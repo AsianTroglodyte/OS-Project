@@ -1,11 +1,7 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
-    // the default value is very important it allows for implicit 
-    // typing. code refuses "any" 
-    export let processes = [
-        {id: 0, processType: "P1"},
-    ];
-
+    // need to add explicit typing 
+    export let processes;
     export let addProcess = (ProcessType: string) => {};
     export let removeProcess = (id: number) => {};
 
@@ -48,24 +44,26 @@
 
             <!-- Body -->
             <tbody >
-                {#each processes as process}
-                    <tr transition:fade>
-                        <!-- rounded to make sure edges of table are not cut -->
-                        <th class="bg-base-200 rounded-2xl">{process.id}</th>
-                        <td class="border-collapse border-slate-500 rounded-2xl" >
-                            <p class="text-center">{process.processType} </p> 
-                        </td>
-                        <td class="flex flex-row border-collapse border-slate-500 rounded-2xl gap-1">
-                            <button class="btn btn-square btn-outline btn-sm"
-                                on:click={() => removeProcess(process.id)}>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                            <button class="btn btn-square btn-outline btn-sm">
-                                Run
-                            </button>
-                        </td>
-                    </tr>
-                {/each}
+                {#if processes !== undefined}
+                    {#each processes as process}
+                        <tr transition:fade>
+                            <!-- rounded to make sure edges of table are not cut -->
+                            <th class="bg-base-200 rounded-2xl">{process.id}</th>
+                            <td class="border-collapse border-slate-500 rounded-2xl" >
+                                <p class="text-center">{process.processType} </p> 
+                            </td>
+                            <td class="flex flex-row border-collapse border-slate-500 rounded-2xl gap-1">
+                                <button class="btn btn-square btn-outline btn-sm"
+                                    on:click={() => removeProcess(process.id)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                                <button class="btn btn-square btn-outline btn-sm">
+                                    Run
+                                </button>
+                            </td>
+                        </tr>
+                    {/each}
+                {/if}
             </tbody>
         </table>
     </div>
@@ -85,12 +83,14 @@
                 </tr>
             </thead>
             <tbody>
-                {#each processes as process}
-                    <tr>
-                        <th class="bg-base-200  rounded-2xl text-center">{process.id}</th>
-                        <td class="bg-base-200  rounded-2xl text-center">{process.processType}</td>
-                    </tr>
-                {/each}
+                {#if processes !== undefined}
+                    {#each processes as process}
+                        <tr>
+                            <th class="bg-base-200  rounded-2xl text-center">{process.id}</th>
+                            <td class="bg-base-200  rounded-2xl text-center">{process.processType}</td>
+                        </tr>
+                    {/each}
+                {/if}
             </tbody>
         </table>
     </div>
@@ -110,12 +110,14 @@
                 </tr>
             </thead>
             <tbody>
-                {#each processes as process}
-                    <tr>
-                        <th class="bg-base-200  rounded-2xl text-center">{process.id}</th>
-                        <td class="bg-base-200  rounded-2xl text-center">{process.processType}</td>
-                    </tr>
-                {/each}
+                {#if processes !== undefined}
+                    {#each processes as process}
+                        <tr>
+                            <th class="bg-base-200  rounded-2xl text-center">{process.id}</th>
+                            <td class="bg-base-200  rounded-2xl text-center">{process.processType}</td>
+                        </tr>
+                    {/each}
+                {/if}
             </tbody>
         </table>
     </div>

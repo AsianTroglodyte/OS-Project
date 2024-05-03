@@ -1,17 +1,22 @@
 <script>
 // @ts-nocheck
-
+    // Page Table Entry (PTE). this component is meant to be reused by Page Table component. It is the row along with all the DND logic.
+    // I deemed it unique enough to warrant a seperate component from MemAddrRow.Svelte
     import { TRIGGERS, dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME} from 'svelte-dnd-action';
+    import About from '../../routes/about.svelte';
+    import MemAddrRow from './MemAddrRow.svelte';
 
 
-    export let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}];
+    export let pageElems;
     export let index;
     export let processes;
 
     $: items = [pageElems[index]];
 
+    // makes sure that the area we are draggin from has a copy in place while dragging
     let shouldIgnoreDndEvents = false;
     function handleDndConsider(e) {
+        // console.log("PTE: ",e.detail.info.trigger)
         const {trigger, id} = e.detail.info;
         if (trigger === TRIGGERS.DRAG_STARTED ) {
             const idx = items.findIndex(item => item.id === id);
@@ -22,7 +27,6 @@
             e.detail.items = e.detail.items.filter(item => !item[SHADOW_ITEM_MARKER_PROPERTY_NAME]);
             e.detail.items.splice(idx, 0, {...items[0], id: newId});
             items = e.detail.items;
-            // console.log(pageElems[pageElems.findIndex(pageElem => pageElem.id === id)].PresentBit);
             shouldIgnoreDndEvents = true;
         }
         else if (!shouldIgnoreDndEvents) {
@@ -31,9 +35,11 @@
         else {
             items = [...items];
         }
-        console.log("consider", items[0], e.detail.items);
     }
 
+
+    // this function makes sure that when we successfully drop an item in another place
+    // we know. The page is then rerendered automtically because allocated variable is part of reactive options below
     let allocated = false;
     function handleDndFinalize(e) {
         // note that every combination of ID and PID is unique 
@@ -70,8 +76,9 @@
 	}
 
 
+    // takes the passed in processes and removes data if PID is not found in Process table
     function handleProcessDeletion(processes) {
-        if (!(items.length === 1 && processes.find((process) =>  process.id === items[0].PID) !== undefined)) {
+        if ((items.length !== 0 && (processes.find((process) =>  process.id === items[0].PID) === undefined))) {
             items = [];
         }
     }
@@ -84,26 +91,33 @@
     $: options = {
         items: items,
         flipDurationMs,
-        dropFromOthersDisabled: allocated,
+        dropFromOthersDisabled: true,
         dragDisabled: allocated,
         transformDraggedElement,
         morphDisabled: true,
     };
 </script>
 
-<!-- the situation here is strange indeed. since <tbody> is effectively replacing the rows
-this means that we have a table that grows by about 2.5 REM everytime the list is updated because 
-of the border-spacing-y-1 class of the table. 
-Therefore, a row is needed at all times to ensure consistent spacing.
-row-->
 <tbody  class="box-border rounded"
 use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFinalize}>
-    {#each items as item (item.id)}
-        <tr class = "bg-primary w-full h-10 text-white shadow-lg font-mono rounded">
-            <th class="text-center "> {items[0].VPN} </th>
-            <td class="text-center "> {items[0].PID} </td>
-            <td class="text-center "> {items[0].ValidBit} </td>
-            <td class="text-center "> {items[0].PresentBit} </td>
+    <!-- There is a subtlety here worth mentioning: the each block is to ensure that when a copy is made that it is actually displayed.
+    if this doesn't make sense to you, play close attention to the implementation of the drag and drop copy logic: handleDndConsider()-->
+    {#each items as item, index (item.id)}
+        <!-- there is probably a much more efficeint way to do this... TOO BAD!!! -->
+        {#if allocated === true}
+        <tr class = "bg-indigo-600 w-full h-10 text-white shadow-lg font-mono rounded">
+            <th class="text-center text-base"> {items[index].VPN} </th>
+            <td class="text-center text-base"> {items[index].PID} </td>
+            <td class="text-center text-base"> {items[index].ValidBit} </td>
+            <td class="text-center text-base"> {items[index].PresentBit} </td>
         </tr>
+        {:else}
+        <tr class = "bg-primary w-full h-10 text-white shadow-lg font-mono rounded">
+            <th class="text-center text-base"> {items[index].VPN} </th>
+            <td class="text-center text-base"> {items[index].PID} </td>
+            <td class="text-center text-base"> {items[index].ValidBit} </td>
+            <td class="text-center text-base"> {items[index].PresentBit} </td>
+        </tr>
+        {/if}
     {/each}
 </tbody>

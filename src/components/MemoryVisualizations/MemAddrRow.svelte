@@ -1,9 +1,8 @@
 <script>
-// @ts-nocheck
-
-    import { TRIGGERS, dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME} from 'svelte-dnd-action';
+    // @ts-nocheck
+    // this component is meant to be reused by PAS and SwapSpace. It is the row along with all the DND logic
+	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
-    import SwapSpace from './SwapSpace.svelte';
 
 
 	export let PFN;
@@ -21,6 +20,7 @@
     // the following handle throws error because sometimes when ran items does not contain anything
     // therefore we check first.
 	function handleConsider(e) {
+        // console.log("MemAddrRow: ",e.detail.items[0]);
 		items = e.detail.items;
     }
 
@@ -42,7 +42,7 @@
     // styling element when being dragged based on 
     function transformDraggedElement(draggedEl, data, index) {
         // recall: PresentBit = 1 means in swap space and PresentBit = 0 means in Physical Address Space
-        if (draggedEl.querySelector('.text-center') !== null && data.PresentBit === 1) {
+        if (draggedEl.querySelector('.text-center') !== null && data.ValidBit === 1) {
             draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
                         bg-primary w-full h-12 text-white font-mono rounded">
                                         <p>PFN: ${data.PFN}</p>
@@ -50,7 +50,7 @@
                                         <p>V-Bit: ${data.VPN}</p>
                                     </div>`;
         }
-        else if (draggedEl.querySelector('.text-center') !== null && data.PresentBit === 0) {
+        else if (draggedEl.querySelector('.text-center') !== null && data.ValidBit === 0) {
                         draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
                         bg-primary w-full h-12 text-white font-mono rounded">
                                         <p>Block #: ${data.BlockID}</p>
@@ -85,11 +85,8 @@
 	};
 </script>
 
-<!-- the situation here is strange indeed. since <tbody> is effectively replacing the rows
-this means that we have a table that grows by about 2.5 REM everytime the list is updated because 
-of the border-spacing-y-1 class of the table. 
-Therefore, a row is needed at all times to ensure consistent spacing.
-row-->
+<!-- since <tbody> is effectively replacing the rows and the table containa border-spacing-y-1 class of the table, we have a table that grows by about 
+2.5 REM everytime a row (or a table if we go by html). Therefore, a row is needed at all times to ensure consistent row-->
 <tbody class="bg-primary w-full h-10 text-white font-mono rounded "
     use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
 
@@ -97,14 +94,14 @@ row-->
         {#each items as item (item.id)}
             <tr class= "bg-primary w-full h-10 text-white font-mono rounded "
             animate:flip={{ duration: flipDurationMs }}>
-                <th>{PFN}</th>
-                <td class="text-center">{item.PID}</td>
-                <td class="text-center">{item.VPN}</td>
+                <th calss="text-center  text-base">{PFN}</th>
+                <td class="text-center  text-base">{item.PID}</td>
+                <td class="text-center  text-base">{item.VPN}</td>
             </tr>
         {/each}
     {:else}
         <tr class="bg-base-200 w-full h-10 text-white shadow-lg font-mono rounded ">
-            <th class="shadow-lg">{PFN}</th>
+            <th class="shadow-lg  text-base">{PFN}</th>
         </tr>
     {/if}
 </tbody>
