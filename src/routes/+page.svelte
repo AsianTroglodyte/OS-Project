@@ -11,9 +11,6 @@
         {id: 0, processType: "P1"},
     ]
     let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}];
-
-
-
     let pageElemID  = 1;
 
     let addProcess = (ProcessType: string) => {
@@ -60,8 +57,7 @@
     }
 
     let removeProcess = (processID : number) => {
-        // there's probably a better way to do this... too bad!
-        // consider replacing with .find()
+        // removes items from process list. there's probably a better way to do this... too bad! consider replacing with .find()
         for (let i = 0; processes.length > i; i++) {
             if (processes[i].id === processID) {
                 processes.splice(i, 1);
@@ -70,9 +66,15 @@
                 break;
             }
         }
-        
-        // for () pageElems
-        // 
+
+        // removes items from pageElems. 
+        for (let i = 0; i < pageElems.length; i++) {
+            if (pageElems[i].PID === processID) {
+                pageElems.splice(i, 1);
+                pageElems = pageElems;
+                console.log(pageElems);
+            }
+        }
     }
 
     let changePBit = (PID : number, VPN : number, changeNum : number) => {
@@ -83,22 +85,6 @@
         let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
         pageElems[changingElemIndex].ValidBit = changeNum;
     }
-    // checks if there is a copy of a memory address
-    let copyChecker = (PID : number, VPN : number, changeNum : number) => {
-        let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
-        if (changingElemIndex) {
-            return true;
-        }
-    }
-
-    let printPageElems = ( otherMessage) => {
-        console.log(otherMessage, pageElems);
-    }
-
-    let modifyPageElems = (func) => {
-        func(pageElems);
-    }
-
 </script>
 
 <NavBar />
@@ -120,7 +106,7 @@
         </div>
 
         <div class="flex flex-row overflow-auto m-3">
-            <PageTable {pageElems} {printPageElems} {processes}/>
+            <PageTable {pageElems} {processes}/>
             <span class = "text-4xl">&#8596;</span>
             <PAS  {changePBit} {changeVBit} {processes}/>
             <span class = "text-4xl">&#8596;</span>

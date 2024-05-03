@@ -1,11 +1,9 @@
 <script >
     import { TRIGGERS, dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME} from 'svelte-dnd-action';
-	import { flip } from 'svelte/animate';
-    import { fade } from 'svelte/transition';
+    import PTE from './PTE.svelte';
 	
 	export let pageElems = [{id: 0, PID: 0, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}];
     export let processes;
-    export let printPageElems;
 
 	/**
      * @param {{ detail: { items: { id: number; letter: string; }[]; }; }} e
@@ -106,10 +104,9 @@
                 </tr>
             </thead>
 
-            <tbody  class="box-border rounded"
+            <!-- <tbody  class="box-border rounded"
             use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFinalize}>
                 {#each pageElems as pageElem, VPN (pageElem.id)}
-
                         <tr class = "bg-primary w-full h-10 text-white shadow-lg font-mono rounded">
                             <th class="text-center "> {VPN} </th>
                             <td class="text-center "> {pageElem.PID} </td>
@@ -117,7 +114,10 @@
                             <td class="text-center "> {pageElem.PresentBit} </td>
                         </tr>
                 {/each}
-            </tbody>
+            </tbody> -->
+            {#each pageElems as pageElem, index (pageElem.id)}
+                <PTE {pageElems}{index} {processes}/>
+            {/each}
         </table>
     </div>
 </div>
