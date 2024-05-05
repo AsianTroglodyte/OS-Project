@@ -13,6 +13,10 @@
     let pageElems = [];
     // I don't remember why this is here, but its probably important
     let pageElemID  = 1;
+    // this indicates pages needed to run a process by VPN
+    let pagesNeededVPNs = []; 
+    // indicates Process that is running by PID
+    let curRunningProcessID = -1;
 
 
 
@@ -40,15 +44,18 @@
         // appending pageElems pages () depending on ProcessType. could probably be more efficient but I'm too lazy
         //      NOTE: the following looks like a travesty along with pageElemID, but I think it's simple and effective  
         if (ProcessType === "P1") {
-            pageElems = [...pageElems, {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}];
-            pageElemID ++;
+            pageElems = [...pageElems, {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
+                        {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}
+            ];
+            pageElemID += 2;
         }
         else if (ProcessType === "P2") {
             pageElems = [...pageElems, 
                         {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
                         {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
-            pageElemID += 3;
+                        {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
+                        {id: pageElemID + 3, PID: newPID, VPN:3, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
+            pageElemID += 4;
         }
         else if (ProcessType === "P3") {
             pageElems = [...pageElems, 
@@ -56,8 +63,9 @@
                         {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
                         {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
                         {id: pageElemID + 3, PID: newPID, VPN:3, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 4, PID: newPID, VPN:4, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
-            pageElemID += 5; 
+                        {id: pageElemID + 4, PID: newPID, VPN:4, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
+                        {id: pageElemID + 5, PID: newPID, VPN:5, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
+            pageElemID += 6; 
         }
         processes = [...processes, {id: newPID, processType: ProcessType}];
         // console.log("add PageElems: ",pageElems)
@@ -86,24 +94,76 @@
                 pageElems = pageElems;
             }
         }
-        // console.log("add PageElems: ",pageElems)
-        // console.log("add processes: ",processes)
+
+        // if you delete a process that is runing
+        curRunningProcessID = -1;
+        // console.log("remove PageElems: ",pageElems)
+        // console.log("remove processes: ",processes)
     }
 
 
 
-    // Runs a Process and prompts users to manage pages so that all relevant pages are in the physical
-    // address space to run. When it is run, frequency and recency of use for a page are updated. 
+    // Runs a Process and prompts users to manage pages by highlighting the randomly chosen relevant pages. all pages are 
+    // supposed to be in the physical address space to run. When it is run, frequency and recency of use for a page are updated and 
+    // the process takes its time to actually run. 
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
-    // let runProcess = (processes) => {
-    //     let runningProcessIndex = getRandomInt(processes.length);
-    //     let runningProcessPID = processes.find(process => );
 
-    //     console.log("running", );
-    // } 
+    // for game implementation. maybe later!!!!
+    let runRandomProcess = (processes) => {
+        // finding processs to run
+        let runningProcessIndex = getRandomInt(processes.length);
 
+        // pages vary depending on process
+        let pagesNeededVPNs = []
+        if (processes[runningProcessIndex].processType === "P1") pagesNeededVPNs = [0, 1];
+        else if (processes[runningProcessIndex].processType === "P2") pagesNeededVPNs = [0, 1, 2, 3];
+        else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [0, 1, 2, 3, 4, 5];
+
+        // finding specific pages to run via VPN. yes, yes, the implementation is very clever. please give me a good grade :V
+        pagesNeededVPNs = pagesNeededVPNs.splice(getRandomInt(processes.length), 1);
+
+        console.log("choson", pagesNeededVPNs);
+    }
+
+    let promptRunProcess = (processID) => {
+        // only allow this to run if there isn't already a process running
+        if (curRunningProcessID !== -1) {
+            return ;
+        }
+        // finding processs to run
+        let runningProcessIndex = processes.findIndex(process => process.id === processID);
+
+        // pages vary depending on process
+        let pagesNeededVPNs = []
+        if (processes[runningProcessIndex].processType === "P1") pagesNeededVPNs = [0, 1];
+        else if (processes[runningProcessIndex].processType === "P2") pagesNeededVPNs = [0, 1, 2, 3];
+        else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [0, 1, 2, 3, 4, 5];
+
+        // finding specific pages to run via VPN. yes, yes, the implementation is very clever. please give me a good grade :V
+        pagesNeededVPNs.splice(getRandomInt(pagesNeededVPNs.length), 1);
+        pagesNeededVPNs = pagesNeededVPNs;
+        
+        // update the current running process
+        curRunningProcessID = processID;
+
+        console.log("chosen: ", pagesNeededVPNs);
+        console.log("process table: ", processes);
+    }
+
+    // returns true if PAS conntains all pages required for current running process  
+    function checkPASForProcessPages() {
+        
+    }
+
+    // runs process 
+    function runProcess() {
+        // visually indicate that processes are running for a few seconds
+
+
+        curRunningProcessID = -1;
+    }
 
 
     // Bits displayed on page table need to be changed depending on whether it is in: memory and or disk
@@ -115,6 +175,7 @@
         let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
         pageElems[changingElemIndex].ValidBit = changeNum;
     }
+
 </script>
 
 <NavBar />
@@ -131,15 +192,15 @@
 
     <div class="flex flex-row justify-center" >
         <div class = "flex flex-col justify-start overflow-y-auto gap-5 m-3" style="height: 80vh;">
-            <ProcessTableAndStats {processes} {addProcess} {removeProcess}/>
+            <ProcessTableAndStats {processes} {addProcess} {removeProcess} {promptRunProcess}/>
         </div>
 
         <div class="flex flex-row overflow-auto m-3">
-            <PageTable {pageElems} {processes}/>
+            <PageTable {pageElems} {processes} {pagesNeededVPNs} {curRunningProcessID}/>
             <span class = "text-4xl">&#8596;</span>
-            <PAS  {changePBit} {changeVBit} {processes}/>
+            <PAS  {changePBit} {changeVBit} {processes} {curRunningProcessID} {pagesNeededVPNs}/>
             <span class = "text-4xl">&#8596;</span>
-            <SwapSpace {changePBit} {changeVBit} {processes}/>
+            <SwapSpace {changePBit} {changeVBit} {processes} {curRunningProcessID} {pagesNeededVPNs}/>
         </div>
     </div>
 </div>

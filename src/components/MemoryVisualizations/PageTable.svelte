@@ -1,9 +1,10 @@
 <script >
-    import { TRIGGERS, dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME} from 'svelte-dnd-action';
     import PTE from './PTE.svelte';
 	
 	export let pageElems;
     export let processes;
+    export let pagesNeededVPNs;
+    export let curRunningProcessID;
 </script>
 
 <style>
@@ -30,7 +31,7 @@
 
             {#if pageElems !== undefined}
                 {#each pageElems as pageElem, index (pageElem.id)}
-                    <PTE {pageElems}{index} {processes}/>
+                    <PTE {pageElems}{index} {processes} {pagesNeededVPNs} {curRunningProcessID}/>
                 {/each}
             {/if}
         </table>

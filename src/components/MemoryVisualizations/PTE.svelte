@@ -3,13 +3,17 @@
     // Page Table Entry (PTE). this component is meant to be reused by Page Table component. It is the row along with all the DND logic.
     // I deemed it unique enough to warrant a seperate component from MemAddrRow.Svelte
     import { TRIGGERS, dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME} from 'svelte-dnd-action';
-    import About from '../../routes/about.svelte';
-    import MemAddrRow from './MemAddrRow.svelte';
 
 
     export let pageElems;
     export let index;
     export let processes;
+    export let pagesNeededVPNs;
+    export let curRunningProcessID;
+    function printStuff(stuff) {
+        console.log("curRunningProcessID", stuff);
+    }
+    $: printStuff(curRunningProcessID);
 
     $: items = [pageElems[index]];
 
@@ -63,17 +67,21 @@
     // while being dragged as <tr> cannot use regular styling to make up for this without destroying the table format
     // NOTE: this option can only affect children of calling element 
     // the following really neads https://svelte.dev/repl/3d8be94b2bbd407c8a706d5054c8df6a?version=3.59.2
-    function transformDraggedElement(draggedEl, data, index) {
-        if (draggedEl.querySelector('.text-center') !== null) {
-            draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
-                        bg-primary w-full h-12 text-white font-mono rounded">
-                                        <p>VPN: ${data.VPN}</p>
-                                        <p>PID: ${data.PID}</p>
-                                        <p>V-Bit: ${data.ValidBit}</p>
-                                        <p>P-Bit: ${data.PresentBit}</p>
-                                    </div>`;
-        }
-	}
+
+    // function transformDraggedElement(draggedEl, data, index) {
+    //     if (draggedEl.querySelector('.text-center') !== null) {
+    //         draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
+    //                     bg-primary w-full h-12 text-white font-mono rounded"> </div>`;
+    //     }
+    //     // fix the following:
+    //     // draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
+    //     //                 bg-primary w-full h-12 text-white font-mono rounded">
+    //     //                                 <p>VPN: ${data.VPN}</p>
+    //     //                                 <p>PID: ${data.PID}</p>
+    //     //                                 <p>V-Bit: ${data.ValidBit}</p>
+    //     //                                 <p>P-Bit: ${data.PresentBit}</p>
+    //     //                             </div>`;
+	// }
 
 
     // takes the passed in processes and removes data if PID is not found in Process table
@@ -93,9 +101,18 @@
         flipDurationMs,
         dropFromOthersDisabled: true,
         dragDisabled: allocated,
-        transformDraggedElement,
+        // transformDraggedElement,
         morphDisabled: true,
     };
+
+     // to make sure that items are draggable when the current running process is changed
+    // don't ask why. drag gets disabled when a process is run and some pages are already allocated
+    function handleCurRunningProcessID() {
+        if (curRunningProcessID === items[0].PID && !allocated) {
+            options.dragDisabled = false;
+        }
+    }
+    $: curRunningProcessID, handleCurRunningProcessID();
 </script>
 
 <tbody  class="box-border rounded"
@@ -105,19 +122,37 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
     {#each items as item, index (item.id)}
         <!-- there is probably a much more efficeint way to do this... TOO BAD!!! -->
         {#if allocated === true}
-        <tr class = "bg-indigo-600 w-full h-10 text-white shadow-lg font-mono rounded">
-            <th class="text-center text-base"> {items[index].VPN} </th>
-            <td class="text-center text-base"> {items[index].PID} </td>
-            <td class="text-center text-base"> {items[index].ValidBit} </td>
-            <td class="text-center text-base"> {items[index].PresentBit} </td>
-        </tr>
+            {#if (items.length !== 0) && (curRunningProcessID === items[0].PID)}
+                <tr class = "bg-teal-600 w-full h-10 text-white shadow-lg font-mono rounded">
+                    <th class="text-center text-base"> {items[index].VPN} </th>
+                    <td class="text-center text-base"> {items[index].PID} </td>
+                    <td class="text-center text-base"> {items[index].ValidBit} </td>
+                    <td class="text-center text-base"> {items[index].PresentBit} </td>
+                </tr>
+            {:else}
+                <tr class = "bg-indigo-600 w-full h-10 text-white shadow-lg font-mono rounded">
+                    <th class="text-center text-base"> {items[index].VPN} </th>
+                    <td class="text-center text-base"> {items[index].PID} </td>
+                    <td class="text-center text-base"> {items[index].ValidBit} </td>
+                    <td class="text-center text-base"> {items[index].PresentBit} </td>
+                </tr>
+            {/if}
         {:else}
-        <tr class = "bg-primary w-full h-10 text-white shadow-lg font-mono rounded">
-            <th class="text-center text-base"> {items[index].VPN} </th>
-            <td class="text-center text-base"> {items[index].PID} </td>
-            <td class="text-center text-base"> {items[index].ValidBit} </td>
-            <td class="text-center text-base"> {items[index].PresentBit} </td>
-        </tr>
+            {#if (items.length !== 0) && (curRunningProcessID === items[0].PID)}
+                <tr class = "bg-accent w-full h-10 text-white shadow-lg font-mono rounded">
+                    <th class="text-center text-base"> {items[index].VPN} </th>
+                    <td class="text-center text-base"> {items[index].PID} </td>
+                    <td class="text-center text-base"> {items[index].ValidBit} </td>
+                    <td class="text-center text-base"> {items[index].PresentBit} </td>
+                </tr>
+            {:else}
+                <tr class = "bg-primary w-full h-10 text-white shadow-lg font-mono rounded">
+                    <th class="text-center text-base"> {items[index].VPN} </th>
+                    <td class="text-center text-base"> {items[index].PID} </td>
+                    <td class="text-center text-base"> {items[index].ValidBit} </td>
+                    <td class="text-center text-base"> {items[index].PresentBit} </td>
+                </tr>
+            {/if}
         {/if}
     {/each}
 </tbody>
