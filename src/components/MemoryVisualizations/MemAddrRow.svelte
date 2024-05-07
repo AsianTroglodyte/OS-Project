@@ -136,6 +136,7 @@
         && state === "running process"
         && curRunningProcessID === items[0].PID
         && (pagesNeededVPNs.find((neededPage) => {return neededPage.VPN === items[0].VPN}) !== undefined)) {
+            options.dragDisabled = true;
             items[0].Frequency += 1;
         }
     }
