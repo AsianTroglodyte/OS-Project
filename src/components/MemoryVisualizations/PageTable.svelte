@@ -15,7 +15,7 @@
         Page Table 
     </div>
     
-    <div class="overflow-y-auto w-60" style="height:74vh" >
+    <div class="overflow-y-auto w-60" style="height:67vh" >
         <table class="table-xs table-auto w-full 
         table-pin-rows table-pin-cols bg-base-200 
         border-separate border-spacing-y-1 ">

@@ -107,7 +107,7 @@
         morphDisabled: true,
     };
 
-     // to make sure that items are draggable when the current running process is changed
+    // to make sure that items are draggable when the current running process is changed
     // don't ask why. drag gets disabled when a process is run and some pages are already allocated
     function handleCurRunningProcessID() {
         if (curRunningProcessID === items[0].PID && !allocated) {
@@ -126,14 +126,14 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
         {#if allocated === true}
             {#if (items.length !== 0) && (curRunningProcessID === items[0].PID) 
             && pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0}
-                <tr class = "bg-teal-600 w-full h-10 text-white shadow-lg font-mono rounded">
+                <tr class = "bg-teal-600 w-full h-9 text-white shadow-lg font-mono rounded">
                     <th class="text-center text-base"> {items[index].VPN} </th>
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
                 </tr>
             {:else}
-                <tr class = "bg-indigo-600 w-full h-10 text-white shadow-lg font-mono rounded">
+                <tr class = "bg-indigo-600 w-full h-9 text-white shadow-lg font-mono rounded">
                     <th class="text-center text-base"> {items[index].VPN} </th>
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
@@ -143,14 +143,14 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
         {:else}
             {#if (items.length !== 0) && (curRunningProcessID === items[0].PID) 
             && pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0}
-                <tr class = "bg-accent w-full h-10 text-white shadow-lg font-mono rounded">
+                <tr class = "bg-accent w-full h-9 text-white shadow-lg font-mono rounded">
                     <th class="text-center text-base"> {items[index].VPN} </th>
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
                 </tr>
             {:else}
-                <tr class = "bg-primary w-full h-10 text-white shadow-lg font-mono rounded">
+                <tr class = "bg-primary w-full h-9 text-white shadow-lg font-mono rounded">
                     <th class="text-center text-base"> {items[index].VPN} </th>
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>

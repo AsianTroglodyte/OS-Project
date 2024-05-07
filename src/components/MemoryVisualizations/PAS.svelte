@@ -8,6 +8,7 @@
     export let changeVBit;
     export let curRunningProcessID;
     export let pagesNeededVPNs;
+    export let state;
     export let runProcess = () => {};
     
     let inSwapSpace = false;
@@ -59,6 +60,7 @@
                 <th class="bg-base-200  rounded-2xl text-xs">PFN</th>
                 <th class="bg-base-200  rounded-2xl text-xs">PID</th>
                 <th class="bg-base-200  rounded-2xl text-xs">VPN</th>
+                <th class="bg-base-200  rounded-2xl text-xs">Frequency</th>
             </tr>
         </thead>
         <!-- PFN acts as an index as well -->
@@ -69,6 +71,7 @@
                         {changeVBit} 
                         {inSwapSpace} 
                         {curRunningProcessID} 
+                        {state}
                         bind:pagesNeededVPNs={pagesNeededVPNs}
                         {runProcess}/>
         {/each}

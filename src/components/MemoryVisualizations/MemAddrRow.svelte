@@ -11,6 +11,7 @@
     export let changeVBit;
     export let inSwapSpace;
     export let curRunningProcessID;
+    export let state;
     export let pagesNeededVPNs = [];
     export let runProcess = () => {};
 
@@ -47,20 +48,12 @@
                     pagesNeededVPNs[pagesNeededVPNs.findIndex(neededPage => neededPage.VPN === items[0].VPN)].inPAS = true;
                 }
             }
-
         }
-
-        console.log("MemAddrRow - pagesNeededVPNs: ", pagesNeededVPNs);
-        console.log("processes", processes);
-        console.log("curRunningProcessID", curRunningProcessID);
+        
         // NOTE 
         if (pagesNeededVPNs.length > 0 && pagesNeededVPNs.every(neededPage => {return neededPage.inPAS === true;})) {
             runProcess();
         }
-        console.log("MemAddrRow finalize:", "\nitems:", items, "");
-        console.log("MemAddrRow - pagesNeededVPNs - after: ", pagesNeededVPNs);
-        console.log("processes - after", processes);
-        console.log("curRunningProcessID - after", curRunningProcessID);
     }
 	
     // styling element when being dragged. This is a bit difficult to get working
@@ -109,6 +102,9 @@
                 runProcess();
             }
         }
+
+        // updating frequency
+
         // console.log("items: ", items);
     }
     $: curRunningProcessID, handleCurRunningProcessID();
@@ -135,35 +131,47 @@
     }
     $: processes, handleProcessDeletion();
 
+    function handleFrequencyUpdate(){
+        if ( items.length !== 0        
+        && state === "running process"
+        && curRunningProcessID === items[0].PID
+        && (pagesNeededVPNs.find((neededPage) => {return neededPage.VPN === items[0].VPN}) !== undefined)) {
+            items[0].Frequency += 1;
+        }
+    }
+    $: state, handleFrequencyUpdate();
+
 	const flipDurationMs = 100;
 
 </script>
 
 
-<tbody class="bg-primary w-full h-10 text-white font-mono rounded "
+<tbody class="bg-primary w-full h-9 text-white font-mono rounded "
 use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
     {#if (items.length !== 0) 
     && (curRunningProcessID === items[0].PID) 
     && (pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0)}
             {#each items as item (item.id)}
-                <tr class= "bg-accent w-full h-10 text-white font-mono rounded "
+                <tr class= "bg-accent w-full h-9 text-white font-mono rounded "
                 animate:flip={{ duration: flipDurationMs }}>
                     <th class="text-center  text-base">{PFN}</th>
                     <td class="text-center  text-base">{item.PID}</td>
                     <td class="text-center  text-base">{item.VPN}</td>
+                    <td class="text-center  text-base">{item.Frequency}</td>
                 </tr>
             {/each}
     {:else if (items.length !== 0)}
             {#each items as item (item.id)}
-                <tr class= "bg-primary w-full h-10 text-white font-mono rounded "
+                <tr class= "bg-primary w-full h-9 text-white font-mono rounded "
                 animate:flip={{ duration: flipDurationMs }}>
                     <th class="text-center  text-base">{PFN}</th>
                     <td class="text-center  text-base">{item.PID}</td>
                     <td class="text-center  text-base">{item.VPN}</td>
+                    <td class="text-center  text-base">{item.Frequency}</td>
                 </tr>
             {/each}
     {:else if (items.length === 0)}
-            <tr class="bg-base-200 w-full h-10 text-white shadow-lg font-mono rounded ">
+            <tr class="bg-base-200 w-full h-9 text-white shadow-lg font-mono rounded ">
                 <th class="shadow-lg  text-base">{PFN}</th>
             </tr>
     {/if}

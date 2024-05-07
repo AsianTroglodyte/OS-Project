@@ -4,6 +4,7 @@
     import SwapSpace from "../components/MemoryVisualizations/SwapSpace.svelte";
     import PageTable from "../components/MemoryVisualizations/PageTable.svelte";
     import NavBar from "../components/NavBar.svelte";
+    import UserPromptArea from "../components/UserPromptArea.svelte";
 
 
     // for process table. Need to define shape using TS: {id: 0, processType: "P1"}
@@ -17,6 +18,8 @@
     let pagesNeededVPNs = []; 
     // indicates Process that is running by PID
     let curRunningProcessID = -1;
+    // state for changing UserPromptArea
+    let state = "waiting for run";
 
 
     // performs all tasks related to adding a process
@@ -41,34 +44,32 @@
         }
 
         // appending pageElems pages () depending on ProcessType. could probably be more efficient but I'm too lazy
-        //      NOTE: the following looks like a travesty along with pageElemID, but I think it's simple and effective  
+        //      NOTE: the following is sort of a travesty but it is flexible.
         if (ProcessType === "P1") {
-            pageElems = [...pageElems, {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}
+            pageElems = [...pageElems, {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0}
             ];
             pageElemID += 2;
         }
         else if (ProcessType === "P2") {
             pageElems = [...pageElems, 
-                        {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 3, PID: newPID, VPN:3, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
+                        {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 3, PID: newPID, VPN:3, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0}]
             pageElemID += 4;
         }
         else if (ProcessType === "P3") {
             pageElems = [...pageElems, 
-                        {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 3, PID: newPID, VPN:3, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 4, PID: newPID, VPN:4, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0},
-                        {id: pageElemID + 5, PID: newPID, VPN:5, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0}]
+                        {id: pageElemID, PID: newPID, VPN:0, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 1, PID: newPID, VPN:1, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 2, PID: newPID, VPN:2, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 3, PID: newPID, VPN:3, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 4, PID: newPID, VPN:4, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0},
+                        {id: pageElemID + 5, PID: newPID, VPN:5, PFN:0, BlockID: 0, PresentBit: 0, ValidBit: 0, Frequency: 0}]
             pageElemID += 6; 
         }
         processes = [...processes, {id: newPID, processType: ProcessType}];
-        // console.log("add PageElems: ",pageElems)
-        // console.log("add processes: ",processes)
     }
 
 
@@ -98,9 +99,6 @@
             curRunningProcessID = -1;
             pagesNeededVPNs = [];
         }
-        console.log("deleted: ", curRunningProcessID);
-        // console.log("remove PageElems: ",pageElems)
-        // console.log("remove processes: ",processes)
     }
 
 
@@ -129,13 +127,12 @@
         pagesNeededVPNs.splice(getRandomInt(processes.length), 1);
         pagesNeededVPNs = pagesNeededVPNs;
 
-        console.log("chosen", pagesNeededVPNs);
     }
 
     let promptRunProcess = (processID) => {
         // only allow this to run if there isn't already a process running
         if (curRunningProcessID !== -1) {
-            return ;
+            return;
         }
         // finding processs to run
         let runningProcessIndex = processes.findIndex(process => process.id === processID);
@@ -147,26 +144,34 @@
         else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false},
                                                                                         {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false},
                                                                                         {VPN: 4, inPAS: false}, {VPN: 5, inPAS: false}];
-        // console.log("initial pagesNeededVPNs ", pagesNeededVPNs);
 
         // finding specific pages to run via VPN. yes, yes, the implementation is very clever. please give me a good grade :V
         pagesNeededVPNs.splice(getRandomInt(pagesNeededVPNs.length), 1);
         pagesNeededVPNs = pagesNeededVPNs;
         
+        // need to change the prompt area using state
+        state = "waiting for pages";
+        
         // update the current running process
         curRunningProcessID = processID;
-
-        // console.log("chosen (prompting): ", pagesNeededVPNs);
-        // console.log("processes: ", processes);
     }
 
     // returns true if PAS conntains all pages required for current running process  
     function runProcess() {
-        console.log("runProcess");
-        pagesNeededVPNs = [];
+        state = "running process";
 
-        // runs process 
-        curRunningProcessID = -1;
+        function wipeEverything() {
+            // order here is important some things respond in reaction to change of curRunningProcessID that
+            // needs info from pagesNeededVPNs
+            curRunningProcessID = -1;
+
+            pagesNeededVPNs = [];
+
+            // changing process back to initial state for promptArea
+            state = "waiting for run";
+        }
+
+        setTimeout(wipeEverything, 3000);
     }
 
 
@@ -185,7 +190,7 @@
 <NavBar />
 
 <!-- section for simulation -->
-<div class = "flex flex-col items-center align center overflow-y-auto gap-5 m-3"> 
+<div class = "flex flex-col items-center overflow-y-auto "> 
     <!-- <div class = "" style="width: 80vh;">
         <p>NOTE: Page Table valid bit indicates whether a page has been allocated any memory OR disk of any stroke-width.
         In other words, a "true" valid bit indicates means that the page is in either memory or disk. </p>
@@ -193,9 +198,11 @@
         <p>Present Bit, on the other hand is indicates whether the page is in EITHER memory OR disk. In other words, if 
         the present bit is true (1) that means the page is in memory and false (0) if it is disk instead. </p>
     </div> -->
+    <UserPromptArea {state} {processes}/>
 
+    
     <div class="flex flex-row justify-center" >
-        <div class = "flex flex-col justify-start overflow-y-auto gap-5 m-3" style="height: 80vh;">
+        <div class = "flex flex-col justify-start overflow-y-auto gap-5 m-3" style="height: 74vh;">
             <ProcessTableAndStats {processes} {addProcess} {removeProcess} {promptRunProcess}/>
         </div>
 
@@ -203,7 +210,7 @@
             <PageTable {pageElems} {processes} {pagesNeededVPNs} {curRunningProcessID}/>
             <span class = "text-4xl">&#8596;</span>
             <!-- Yes, yes binds are very bad. I definitely need to better understand state management tools here. including in react -->
-            <PAS  {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} {runProcess}/>
+            <PAS  {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} {runProcess} {state}/>
             <span class = "text-4xl">&#8596;</span>
             <SwapSpace {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs}/>
         </div>
