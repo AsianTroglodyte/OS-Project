@@ -2,6 +2,13 @@
 this is a website that provides an interative visualization for how swapping works, 
 where the user acts as the OS managing memory and choosing what processes to.
 
+# Future Developments
+- don't import all of DaisUI. import only required parts to reduce package size
+- gameify
+- refactor
+- refactor
+- refactor
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
