@@ -60,6 +60,8 @@
         if (e.detail.info.trigger === "droppedIntoAnother") {
             allocated = true;
         }
+
+        // checking if all required pages for a process are in PAS then running that process
     }
     
     // styling here is important because the contents of the tables are not formatted by their direct parents,
@@ -122,7 +124,8 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
     {#each items as item, index (item.id)}
         <!-- there is probably a much more efficeint way to do this... TOO BAD!!! -->
         {#if allocated === true}
-            {#if (items.length !== 0) && (curRunningProcessID === items[0].PID)}
+            {#if (items.length !== 0) && (curRunningProcessID === items[0].PID) 
+            && pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0}
                 <tr class = "bg-teal-600 w-full h-10 text-white shadow-lg font-mono rounded">
                     <th class="text-center text-base"> {items[index].VPN} </th>
                     <td class="text-center text-base"> {items[index].PID} </td>
@@ -138,7 +141,8 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                 </tr>
             {/if}
         {:else}
-            {#if (items.length !== 0) && (curRunningProcessID === items[0].PID)}
+            {#if (items.length !== 0) && (curRunningProcessID === items[0].PID) 
+            && pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0}
                 <tr class = "bg-accent w-full h-10 text-white shadow-lg font-mono rounded">
                     <th class="text-center text-base"> {items[index].VPN} </th>
                     <td class="text-center text-base"> {items[index].PID} </td>

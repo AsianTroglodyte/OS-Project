@@ -4,14 +4,15 @@
 	import { dndzone } from 'svelte-dnd-action';
 	import { flip } from 'svelte/animate';
 
-
+    // consolidating more of these variables into a single powerful variable would be good: To do later.
 	export let PFN;
     export let processes;
     export let changePBit;
     export let changeVBit;
     export let inSwapSpace;
     export let curRunningProcessID;
-    export let pagesNeededVPNs;
+    export let pagesNeededVPNs = [];
+    export let runProcess = () => {};
 
     let items = [];
 
@@ -24,19 +25,42 @@
     }
 
     function handleFinalize(e) {
+        // changing bits on page table and on items as needed
         items = e.detail.items;
         if (items.length === 1) {
-            changePBit(items[0].PID, items[0].VPN, 1)
+            changePBit(items[0].PID, items[0].VPN, 1);
             if (inSwapSpace) {
-                changeVBit(items[0].PID, items[0].VPN, 0)
+                changeVBit(items[0].PID, items[0].VPN, 0);
                 items[0].ValidBit = 0;
+
+                // changing whether inPAS of pagdsNeededVPNs
+                if (curRunningProcessID === items[0].PID && pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0) {
+                    pagesNeededVPNs[pagesNeededVPNs.findIndex(neededPage => neededPage.VPN === items[0].VPN)].inPAS = false;
+                }
             }
             else {
-                changeVBit(items[0].PID, items[0].VPN, 1)
+                changeVBit(items[0].PID, items[0].VPN, 1);
                 items[0].ValidBit = 1;
+
+                // changing whether inPAS of pagdsNeededVPNs
+                if (curRunningProcessID === items[0].PID && pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0) {
+                    pagesNeededVPNs[pagesNeededVPNs.findIndex(neededPage => neededPage.VPN === items[0].VPN)].inPAS = true;
+                }
             }
+
+        }
+
+        console.log("MemAddrRow - pagesNeededVPNs: ", pagesNeededVPNs);
+        console.log("processes", processes);
+        console.log("curRunningProcessID", curRunningProcessID);
+        // NOTE 
+        if (pagesNeededVPNs.length > 0 && pagesNeededVPNs.every(neededPage => {return neededPage.inPAS === true;})) {
+            runProcess();
         }
         console.log("MemAddrRow finalize:", "\nitems:", items, "");
+        console.log("MemAddrRow - pagesNeededVPNs - after: ", pagesNeededVPNs);
+        console.log("processes - after", processes);
+        console.log("curRunningProcessID - after", curRunningProcessID);
     }
 	
     // styling element when being dragged. This is a bit difficult to get working
@@ -60,25 +84,8 @@
     //             //                     </div>`;
 	// }
 
-
-    // delete the contents of items if the process cannot be found in the process table (in the process table's array at least)
-    // I know its terrible because it updates on every process table change. instead of every deletion.
-    // Also the bang at the beginning of the conditional is very wonky, but I'm strapped for time rn.
-    function handleProcessDeletion(processes) {
-        if (!(items.length === 1 && processes.find((process) =>  process.id === items[0].PID) !== undefined)) {
-            items = [];
-        }
-    }
-    $: handleProcessDeletion(processes);
-
-	const flipDurationMs = 100;
-
-    function printItems(dropFromOthersDisabled, items, dragDisabled) {
-        console.log("print items ", "PFN: ", dropFromOthersDisabled, items, dragDisabled);
-    }
 	
-    // options / how the dnd zone works must change depending on information
-    // thus a reactive declaration
+    // options / how the dnd zone works must change depending on information, thus a reactive declaration
 	$: options = {
 		dropFromOthersDisabled: items.length,
 		items: items,
@@ -87,55 +94,57 @@
 		flipDurationMs: 0,
         dragDisabled: items.length === 1?  false: true,
     };
-    $: printItems(options.dropFromOthersDisabled, options.items, options.dragDisabled);
     
-    // to make sure that items are draggable when the current running process is changed
+    // to make sure that items are draggable when the current running process is changed. 
     // don't ask why. drag gets disabled when a process is run and some pages are already allocated
     function handleCurRunningProcessID() {
+        // console.log("handleCurRunningProcessID");
         options.dragDisabled = false;
+        if (items.length > 0  
+        && curRunningProcessID === items[0].PID 
+        && pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0 
+        && !inSwapSpace) {
+            pagesNeededVPNs[pagesNeededVPNs.findIndex(neededPage => neededPage.VPN === items[0].VPN)].inPAS = true;
+            if (pagesNeededVPNs.length > 0 && pagesNeededVPNs.every(neededPage => {return neededPage.inPAS === true;})) {
+                runProcess();
+            }
+        }
+        // console.log("items: ", items);
     }
     $: curRunningProcessID, handleCurRunningProcessID();
 
+    // delete the contents of items if the process cannot be found in the process table (in the process table's array at least)
+    // I know its terrible because it updates on every process table change. instead of every deletion.
+    function handleProcessDeletion() {
+        // console.log("handleProcessDeletion");
+        if ((items.length > 0) && (processes.find((process) => {return process.id === items[0].PID}) === undefined)) {
+            items = [];
+            // somehow the dnd zone gets messed up so we need to reset it when a process is deleted
+            options = {
+                dropFromOthersDisabled: items.length,
+                items: items,
+                dropTargetStyle: {},
+                // transformDraggedElement,
+                flipDurationMs: 0,
+                dragDisabled: items.length === 1?  false: true,
+            };
+        }
+        // when process is deleted when it is running then drag is turned on. Here it is turned off. 
+        // should refactor at a later time
+        options.dragDisabled = true;
+    }
+    $: processes, handleProcessDeletion();
+
+	const flipDurationMs = 100;
+
 </script>
 
-<!-- since <tbody> is effectively replacing the rows and the table containa border-spacing-y-1 class of the table, we have a table that grows by about 
-2.5 REM everytime a row (or a table if we go by html). Therefore, a row is needed at all times to ensure consistent row-->
-	<!-- {#if (items.length !== 0) && (curRunningProcessID === items[0].PID)}
-        <tbody class="bg-primary w-full h-10 text-white font-mono rounded "
-        use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
-            {#each items as item (item.id)}
-                <tr class= "bg-accent w-full h-10 text-white font-mono rounded "
-                animate:flip={{ duration: flipDurationMs }}>
-                    <th class="text-center  text-base">{PFN}</th>
-                    <td class="text-center  text-base">{item.PID}</td>
-                    <td class="text-center  text-base">{item.VPN}</td>
-                </tr>
-            {/each}
-        </tbody>
-    {:else if (items.length !== 0) && (curRunningProcessID !== items[0].PID)}
-        <tbody class="bg-primary w-full h-10 text-white font-mono rounded "
-        use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
-            {#each items as item (item.id)}
-                <tr class= "bg-primary w-full h-10 text-white font-mono rounded "
-                animate:flip={{ duration: flipDurationMs }}>
-                    <th class="text-center  text-base">{PFN}</th>
-                    <td class="text-center  text-base">{item.PID}</td>
-                    <td class="text-center  text-base">{item.VPN}</td>
-                </tr>
-            {/each}
-        </tbody>
-    {:else if (items.length === 0)}
-        <tbody class="bg-primary w-full h-10 text-white font-mono rounded "
-        use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
-            <tr class="bg-base-200 w-full h-10 text-white shadow-lg font-mono rounded ">
-                <th class="shadow-lg  text-base">{PFN}</th>
-            </tr>
-        </tbody>
-    {/if} -->
 
 <tbody class="bg-primary w-full h-10 text-white font-mono rounded "
 use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
-    {#if (items.length !== 0) && (curRunningProcessID === items[0].PID)}
+    {#if (items.length !== 0) 
+    && (curRunningProcessID === items[0].PID) 
+    && (pagesNeededVPNs.filter(neededPage => neededPage.VPN === items[0].VPN).length !== 0)}
             {#each items as item (item.id)}
                 <tr class= "bg-accent w-full h-10 text-white font-mono rounded "
                 animate:flip={{ duration: flipDurationMs }}>
@@ -144,7 +153,7 @@ use:dndzone={options} on:consider={handleConsider} on:finalize={handleFinalize}>
                     <td class="text-center  text-base">{item.VPN}</td>
                 </tr>
             {/each}
-    {:else if (items.length !== 0) && (curRunningProcessID !== items[0].PID)}
+    {:else if (items.length !== 0)}
             {#each items as item (item.id)}
                 <tr class= "bg-primary w-full h-10 text-white font-mono rounded "
                 animate:flip={{ duration: flipDurationMs }}>

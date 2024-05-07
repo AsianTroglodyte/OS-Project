@@ -31,7 +31,7 @@
             </tr>
         </thead>
         {#each swap_count as swap_area, PFN (swap_area.id)}
-            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace} {processes} {curRunningProcessID} {pagesNeededVPNs} />
+            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} />
         {/each}
     </table>
 </div>

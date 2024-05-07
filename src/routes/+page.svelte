@@ -19,7 +19,6 @@
     let curRunningProcessID = -1;
 
 
-
     // performs all tasks related to adding a process
     let addProcess = (ProcessType: string) => {
         let newPID = 0;
@@ -73,7 +72,6 @@
     }
 
 
-
     // performes all tasks related to removing a process: removing all related pages from memory
     let removeProcess = (processID : number) => {
         // removes items from process list. there's probably a better way to do this... too bad! 
@@ -95,8 +93,12 @@
             }
         }
 
-        // if you delete a process that is runing
-        curRunningProcessID = -1;
+        // if you delete a process that is running
+        if (curRunningProcessID === processID) {
+            curRunningProcessID = -1;
+            pagesNeededVPNs = [];
+        }
+        console.log("deleted: ", curRunningProcessID);
         // console.log("remove PageElems: ",pageElems)
         // console.log("remove processes: ",processes)
     }
@@ -116,15 +118,18 @@
         let runningProcessIndex = getRandomInt(processes.length);
 
         // pages vary depending on process
-        let pagesNeededVPNs = []
-        if (processes[runningProcessIndex].processType === "P1") pagesNeededVPNs = [0, 1];
-        else if (processes[runningProcessIndex].processType === "P2") pagesNeededVPNs = [0, 1, 2, 3];
-        else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [0, 1, 2, 3, 4, 5];
+        if (processes[runningProcessIndex].processType === "P1") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false}];
+        else if (processes[runningProcessIndex].processType === "P2") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false}, 
+                                                                                        {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false}];
+        else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false},
+                                                                                        {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false},
+                                                                                        {VPN: 4, inPAS: false}, {VPN: 5, inPAS: false}];
 
         // finding specific pages to run via VPN. yes, yes, the implementation is very clever. please give me a good grade :V
-        pagesNeededVPNs = pagesNeededVPNs.splice(getRandomInt(processes.length), 1);
+        pagesNeededVPNs.splice(getRandomInt(processes.length), 1);
+        pagesNeededVPNs = pagesNeededVPNs;
 
-        console.log("choson", pagesNeededVPNs);
+        console.log("chosen", pagesNeededVPNs);
     }
 
     let promptRunProcess = (processID) => {
@@ -136,10 +141,13 @@
         let runningProcessIndex = processes.findIndex(process => process.id === processID);
 
         // pages vary depending on process
-        let pagesNeededVPNs = []
-        if (processes[runningProcessIndex].processType === "P1") pagesNeededVPNs = [0, 1];
-        else if (processes[runningProcessIndex].processType === "P2") pagesNeededVPNs = [0, 1, 2, 3];
-        else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [0, 1, 2, 3, 4, 5];
+        if (processes[runningProcessIndex].processType === "P1") pagesNeededVPNs = [{VPN: 0, inPAS: false},{VPN: 1, inPAS: false}];
+        else if (processes[runningProcessIndex].processType === "P2") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false}, 
+                                                                                        {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false}];
+        else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false},
+                                                                                        {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false},
+                                                                                        {VPN: 4, inPAS: false}, {VPN: 5, inPAS: false}];
+        // console.log("initial pagesNeededVPNs ", pagesNeededVPNs);
 
         // finding specific pages to run via VPN. yes, yes, the implementation is very clever. please give me a good grade :V
         pagesNeededVPNs.splice(getRandomInt(pagesNeededVPNs.length), 1);
@@ -148,20 +156,16 @@
         // update the current running process
         curRunningProcessID = processID;
 
-        console.log("chosen: ", pagesNeededVPNs);
-        console.log("process table: ", processes);
+        // console.log("chosen (prompting): ", pagesNeededVPNs);
+        // console.log("processes: ", processes);
     }
 
     // returns true if PAS conntains all pages required for current running process  
-    function checkPASForProcessPages() {
-        
-    }
-
-    // runs process 
     function runProcess() {
-        // visually indicate that processes are running for a few seconds
+        console.log("runProcess");
+        pagesNeededVPNs = [];
 
-
+        // runs process 
         curRunningProcessID = -1;
     }
 
@@ -198,9 +202,10 @@
         <div class="flex flex-row overflow-auto m-3">
             <PageTable {pageElems} {processes} {pagesNeededVPNs} {curRunningProcessID}/>
             <span class = "text-4xl">&#8596;</span>
-            <PAS  {changePBit} {changeVBit} {processes} {curRunningProcessID} {pagesNeededVPNs}/>
+            <!-- Yes, yes binds are very bad. I definitely need to better understand state management tools here. including in react -->
+            <PAS  {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} {runProcess}/>
             <span class = "text-4xl">&#8596;</span>
-            <SwapSpace {changePBit} {changeVBit} {processes} {curRunningProcessID} {pagesNeededVPNs}/>
+            <SwapSpace {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs}/>
         </div>
     </div>
 </div>
