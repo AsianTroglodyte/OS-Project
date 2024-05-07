@@ -131,6 +131,7 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
+                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {:else}
                 <tr class = "bg-indigo-600 w-full h-9 text-white shadow-lg font-mono rounded">
@@ -138,6 +139,7 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
+                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {/if}
         {:else}
@@ -148,6 +150,7 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
+                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {:else}
                 <tr class = "bg-primary w-full h-9 text-white shadow-lg font-mono rounded">
@@ -155,6 +158,7 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
+                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {/if}
         {/if}

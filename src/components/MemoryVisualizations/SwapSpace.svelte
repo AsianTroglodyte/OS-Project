@@ -6,6 +6,7 @@
     export let changeVBit;
     export let curRunningProcessID;
     export let pagesNeededVPNs
+    export let state;
 
     const swap_count = [{id: 0},{id:1},{id:2},{id:3},{id:4},{id:5},{id:6},{id:7},{id:8},{id:9}];
     const flipDurationMs = 300;
@@ -28,10 +29,11 @@
                 <th class="bg-base-200  rounded-2xl text-xs">Block #</th>
                 <th class="bg-base-200  rounded-2xl text-xs">PID</th>
                 <th class="bg-base-200  rounded-2xl text-xs">VPN</th>
+                <th class="bg-base-200  rounded-2xl text-xs">Frequency</th>
             </tr>
         </thead>
         {#each swap_count as swap_area, PFN (swap_area.id)}
-            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} />
+            <MemAddrRow {PFN} {changePBit} {changeVBit} {inSwapSpace} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} {state} />
         {/each}
     </table>
 </div>

@@ -212,7 +212,7 @@
             <!-- Yes, yes binds are very bad. I definitely need to better understand state management tools here. including in react -->
             <PAS  {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} {runProcess} {state}/>
             <span class = "text-4xl">&#8596;</span>
-            <SwapSpace {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs}/>
+            <SwapSpace {changePBit} {changeVBit} {processes} {curRunningProcessID} bind:pagesNeededVPNs={pagesNeededVPNs} {state}/>
         </div>
     </div>
 </div>
