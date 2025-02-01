@@ -29,7 +29,7 @@
 
     <!-- Process list in the form of a table -->
     <!-- border-separate border-2 border-slate-500 rounded-lg -->
-    <div class="overflow-y-auto w-60 bg-base-200 " style="height: 25rem">
+    <div class="overflow-y-auto w-60 bg-base-200 " style="height: 24rem">
         <table class="table-xs table-auto w-full
         table-pin-rows table-pin-cols bg-base-200 ">
 

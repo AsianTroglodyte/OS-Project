@@ -71,21 +71,27 @@
     // the following really neads https://svelte.dev/repl/3d8be94b2bbd407c8a706d5054c8df6a?version=3.59.2
 
     // function transformDraggedElement(draggedEl, data, index) {
-    //     if (draggedEl.querySelector('.text-center') !== null) {
-    //         draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
-    //                     bg-primary w-full h-12 text-white font-mono rounded"> </div>`;
-    //     }
+    //     // if (draggedEl.querySelector('.text-center') !== null) {
+    //     //     draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
+    //     //                 bg-primary w-full h-12 text-white font-mono rounded"> </div>`;
+    //     // }
     //     // fix the following:
-    //     // draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
-    //     //                 bg-primary w-full h-12 text-white font-mono rounded">
-    //     //                                 <p>VPN: ${data.VPN}</p>
-    //     //                                 <p>PID: ${data.PID}</p>
-    //     //                                 <p>V-Bit: ${data.ValidBit}</p>
-    //     //                                 <p>P-Bit: ${data.PresentBit}</p>
-    //     //                             </div>`;
+    //     console.log("transformDraggedElement ran");
+    //     draggedEl.innerHTML = `
+    //         <table class="table-xs table-auto w-full 
+    //         table-pin-rows table-pin-cols bg-base-200 
+    //         border-separate border-spacing-y-1 ">
+
+    //             <tr class = "bg-teal-600 w-full h-9 text-white shadow-lg font-mono rounded">
+    //                 <th class="text-center text-base"> {items[index].VPN} </th>
+    //                 <td class="text-center text-base"> {items[index].PID} </td>
+    //                 <td class="text-center text-base"> {items[index].ValidBit} </td>
+    //                 <td class="text-center text-base"> {items[index].PresentBit} </td>
+    //             </tr>
+    //         </table>
+    //     `;
 	// }
-
-
+    
     // takes the passed in processes and removes data if PID is not found in Process table
     function handleProcessDeletion(processes) {
         if ((items.length !== 0 && (processes.find((process) =>  process.id === items[0].PID) === undefined))) {
@@ -118,7 +124,7 @@
 </script>
 
 <tbody  class="box-border rounded"
-use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFinalize}>
+use:dndzone={{options, items}} on:consider={handleDndConsider} on:finalize={handleDndFinalize}>
     <!-- There is a subtlety here worth mentioning: the each block is to ensure that when a copy is made that it is actually displayed.
     if this doesn't make sense to you, play close attention to the implementation of the drag and drop copy logic: handleDndConsider()-->
     {#each items as item, index (item.id)}
@@ -131,7 +137,6 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
-                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {:else}
                 <tr class = "bg-indigo-600 w-full h-9 text-white shadow-lg font-mono rounded">
@@ -139,7 +144,6 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
-                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {/if}
         {:else}
@@ -150,7 +154,6 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
-                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {:else}
                 <tr class = "bg-primary w-full h-9 text-white shadow-lg font-mono rounded">
@@ -158,7 +161,6 @@ use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFina
                     <td class="text-center text-base"> {items[index].PID} </td>
                     <td class="text-center text-base"> {items[index].ValidBit} </td>
                     <td class="text-center text-base"> {items[index].PresentBit} </td>
-                    <td class="text-center  text-base">{items[index].Frequency}</td>
                 </tr>
             {/if}
         {/if}

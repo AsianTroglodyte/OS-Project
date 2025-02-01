@@ -26,8 +26,8 @@
     In other words, a "true" valid bit indicates means that the page is in either memory or disk. </p> -->
 
     {#if state === "running process"}
-        <p class="text-sm font-medium flex flex-col justify-center  ">Running: </p>
-        <div class="flex flex-col justify-center  ">
+        <p class="text-sm font-medium flex flex-col justify-center">Running: </p>
+        <div class="flex flex-col justify-center">
             <progress class="progress progress-accent w-56 h-2" value="{$progress}" max="100"></progress>
         </div>
     {:else if state === "waiting for run" && processes.length > 0}

@@ -145,9 +145,17 @@
                                                                                         {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false},
                                                                                         {VPN: 4, inPAS: false}, {VPN: 5, inPAS: false}];
 
-        // finding specific pages to run via VPN. yes, yes, the implementation is very clever. please give me a good grade :V
-        pagesNeededVPNs.splice(getRandomInt(pagesNeededVPNs.length), 1);
-        pagesNeededVPNs = pagesNeededVPNs;
+        // randomly choosing the amount of processes to not run
+        let numItemsToRemove = 1;
+        if (processes[runningProcessIndex].processType !== "P1") {
+            numItemsToRemove = getRandomInt(3);
+        }
+
+        // randomly removing pages that are not needed to run from pagesNeededVPNs
+        for (let i = 0; i < numItemsToRemove; i ++) {
+            let randIndex = getRandomInt(pagesNeededVPNs.length);
+            pagesNeededVPNs.splice(randIndex, randIndex);
+        }
         
         // need to change the prompt area using state
         state = "waiting for pages";
