@@ -164,7 +164,7 @@
         curRunningProcessID = processID;
     }
 
-    // returns true if PAS conntains all pages required for current running process  
+    // returns true if PAS contains all pages required for current running process  
     function runProcess() {
         state = "running process";
 

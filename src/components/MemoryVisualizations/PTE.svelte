@@ -124,7 +124,7 @@
 </script>
 
 <tbody  class="box-border rounded"
-use:dndzone={{options, items}} on:consider={handleDndConsider} on:finalize={handleDndFinalize}>
+use:dndzone={options} on:consider={handleDndConsider} on:finalize={handleDndFinalize}>
     <!-- There is a subtlety here worth mentioning: the each block is to ensure that when a copy is made that it is actually displayed.
     if this doesn't make sense to you, play close attention to the implementation of the drag and drop copy logic: handleDndConsider()-->
     {#each items as item, index (item.id)}
