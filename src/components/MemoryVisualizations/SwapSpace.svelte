@@ -1,4 +1,4 @@
-<script lang="ts">
+<script >
     import MemAddrRow from './MemAddrRow.svelte';
     
     export let processes;

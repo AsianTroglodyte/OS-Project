@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
     import ProcessTableAndStats from "../components/ProcessTableAndStats.svelte";
     import PAS from "../components/MemoryVisualizations/PAS.svelte";
     import SwapSpace from "../components/MemoryVisualizations/SwapSpace.svelte";
@@ -19,11 +19,10 @@
     // indicates Process that is running by PID
     let curRunningProcessID = -1;
     // state for changing UserPromptArea
-    let state = "waiting for run";
-
+    let state;
 
     // performs all tasks related to adding a process
-    let addProcess = (ProcessType: string) => {
+    let addProcess = (ProcessType) => {
         let newPID = 0;
         //  following determines the PID of latest process. Bit weird, but it is what it is
         for (let i = 0; processes.length >= i; i++) {
@@ -74,7 +73,7 @@
 
 
     // performes all tasks related to removing a process: removing all related pages from memory
-    let removeProcess = (processID : number) => {
+    let removeProcess = (processID) => {
         // removes items from process list. there's probably a better way to do this... too bad! 
         // I swear I tried using find indexOf and my implementations kept breaking. I'll stick with this for now.
         // maybe it is because I previously had a faulty implementation of PTE. Should try later.
@@ -108,25 +107,6 @@
     // the process takes its time to actually run. 
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
-    }
-
-    // for game implementation. maybe later!!!!
-    let runRandomProcess = (processes) => {
-        // finding processs to run
-        let runningProcessIndex = getRandomInt(processes.length);
-
-        // pages vary depending on process
-        if (processes[runningProcessIndex].processType === "P1") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false}];
-        else if (processes[runningProcessIndex].processType === "P2") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false}, 
-                                                                                        {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false}];
-        else if (processes[runningProcessIndex].processType === "P3") pagesNeededVPNs = [{VPN: 0, inPAS: false}, {VPN: 1, inPAS: false},
-                                                                                        {VPN: 2, inPAS: false}, {VPN: 3, inPAS: false},
-                                                                                        {VPN: 4, inPAS: false}, {VPN: 5, inPAS: false}];
-
-        // finding specific pages to run via VPN. yes, yes, the implementation is very clever. please give me a good grade :V
-        pagesNeededVPNs.splice(getRandomInt(processes.length), 1);
-        pagesNeededVPNs = pagesNeededVPNs;
-
     }
 
     let promptRunProcess = (processID) => {
@@ -184,11 +164,11 @@
 
 
     // Bits displayed on page table need to be changed depending on whether it is in: memory and or disk
-    let changePBit = (PID : number, VPN : number, changeNum : number) => {
+    let changePBit = (PID, VPN, changeNum) => {
         let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
         pageElems[changingElemIndex].PresentBit = changeNum;
     }
-    let changeVBit = (PID : number, VPN : number, changeNum : number) => {
+    let changeVBit = (PID, VPN, changeNum) => {
         let changingElemIndex = pageElems.findIndex(pageElem => pageElem.PID === PID  && pageElem.VPN === VPN);
         pageElems[changingElemIndex].ValidBit = changeNum;
     }

@@ -15,6 +15,7 @@
     export let pagesNeededVPNs = [];
     export let runProcess = () => {};
 
+
     let items = [];
 
 
@@ -58,33 +59,61 @@
 	
     // styling element when being dragged. This is a bit difficult to get working
 
-    // function transformDraggedElement(draggedEl, data, index) {
-    //     // recall: PresentBit = 1 means in swap space and PresentBit = 0 means in Physical Address Space
-    //     if (draggedEl.querySelector('.text-center') !== null && data.ValidBit === 1) {
-    //         draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
-    //                     bg-primary w-full h-12 text-white font-mono rounded"></div>`;
-    //     }
-    //     else if (draggedEl.querySelector('.text-center') !== null && data.ValidBit === 0) {
-    //                     draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
-    //                     bg-primary w-full h-12 text-white font-mono rounded"></div>`;
-    //     }
-    //             // fix the following as it is problematic:
-    //             // draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
-    //             //         bg-primary w-full h-12 text-white font-mono rounded">
-    //             //                         <p>Block #: ${data.BlockID}</p>
-    //             //                         <p>PID: ${data.PID}</p>
-    //             //                         <p>V-Bit: ${data.VPN}</p>
-    //             //                     </div>`;
-	// }
+    function transformDraggedElement(draggedEl, data, index) {
+        // recall: PresentBit = 1 means in swap space and PresentBit = 0 means in Physical Address Space
+        // if (draggedEl.querySelector('.text-center') !== null && data.ValidBit === 1) {
+        //     draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
+        //                 bg-primary w-full h-12 text-white font-mono rounded"></div>`;
+        // }
+        // else if (draggedEl.querySelector('.text-center') !== null && data.ValidBit === 0) {
+        //                 draggedEl.innerHTML = `<div class="flex flex-row justify-around items-center
+        //                 bg-primary w-full h-12 text-white font-mono rounded"></div>`;
+        // }
+                // fix the following as it is problematic:
+        draggedEl.innerHTML = `
+        <div class="w-60"  >
+            <table class="table-xs table-auto w-full 
+            table-pin-rows table-pin-cols bg-base-200 
+            border-separate border-spacing-y-1 ">
+                <thead>
+                    <tr>
+                        <th class="text-xs">VPN</th>
+                        <th class="text-xs">PID</th>
+                        <th class="text-xs">V-Bit</th>
+                        <th class="text-xs">P-Bit</th>
+                    </tr>
+                </thead>
+
+                <tbody class="bg-primary w-full h-9 text-white font-mono rounded "
+                    <tr class= "bg-accent w-full h-9 text-white font-mono rounded "
+                    animate:flip={{ duration: flipDurationMs }}>
+                        <th class="text-center text-base">${data.PFN}</th>
+                        <td class="text-center text-base">${data.PID}</td>
+                        <td class="text-center text-base">${data.VPN}</td>
+                        <td class="text-center text-base">${data.Frequency}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        `;
+        console.log(draggedEl.innerHTML)
+        // <div class="flex flex-row justify-around items-center
+        // bg-primary w-full h-12 text-white font-mono rounded">
+        // <p>PFN: ${data.PFN}</p>
+        // <p>PID: ${data.PID}</p>
+        // <p>VPN: ${data.VPN}</p>
+        // <p>Freq: ${data.ValidBit}</p>
+        // </div>
+	}
 
 	
     // options / how the dnd zone works must change depending on information, thus a reactive declaration
-	$: options = {
-		dropFromOthersDisabled: items.length,
-		items: items,
-		dropTargetStyle: {},
-        // transformDraggedElement,
-		flipDurationMs: 0,
+    $: options = {
+        dropFromOthersDisabled: items.length,
+        items: items,
+        dropTargetStyle: {},
+        transformDraggedElement,
+        flipDurationMs: 0,
         dragDisabled: items.length === 1?  false: true,
     };
     
@@ -102,13 +131,13 @@
                 runProcess();
             }
         }
-
+        
         // updating frequency
-
+        
         // console.log("items: ", items);
     }
     $: curRunningProcessID, handleCurRunningProcessID();
-
+    
     // delete the contents of items if the process cannot be found in the process table (in the process table's array at least)
     // I know its terrible because it updates on every process table change. instead of every deletion.
     function handleProcessDeletion() {
@@ -130,8 +159,10 @@
         options.dragDisabled = true;
     }
     $: processes, handleProcessDeletion();
-
-    function handleFrequencyUpdate(){
+    
+    
+    $: handleFrequencyUpdate(state);
+    function handleFrequencyUpdate(state){
         if ( items.length !== 0        
         && state === "running process"
         && curRunningProcessID === items[0].PID
@@ -140,10 +171,9 @@
             items[0].Frequency += 1;
         }
     }
-    $: state, handleFrequencyUpdate();
-
+    
 	const flipDurationMs = 100;
-
+    
 </script>
 
 

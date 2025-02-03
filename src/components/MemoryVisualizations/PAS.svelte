@@ -1,7 +1,5 @@
-<script lang="ts">
-    import {dndzone} from 'svelte-dnd-action';
+<script >
     import MemAddrRow from './MemAddrRow.svelte';
-	import { flip } from 'svelte/animate';
 
     export let processes;
     export let changePBit;
@@ -10,6 +8,7 @@
     export let pagesNeededVPNs;
     export let state;
     export let runProcess = () => {};
+
     
     let inSwapSpace = false;
 

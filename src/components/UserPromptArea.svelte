@@ -2,13 +2,15 @@
     import { tweened} from "svelte/motion";
     import {cubicOut} from "svelte/easing";
     
-    export let state = "waiting for run";
+    export let state;
     export let processes;
     
     // need to learn more about tweened
     let progress = tweened(0, {})
 
-    function runProgressBar() {
+    
+    $: runProgressBar(state)
+    function runProgressBar(state) {
         if (state === "running process") {
             console.log("running", progress);
             progress = tweened(0, {
@@ -18,7 +20,6 @@
             progress.set(100);
         }
     }
-    $: state, runProgressBar()
 </script>
 
 <div class = "flex flex-row justify-center  overflow-y-auto gap-4 h-6" style="width: 600px;">
